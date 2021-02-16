@@ -1,4 +1,5 @@
 class SampleControlledVocabsController < ApplicationController
+
   respond_to :html, :json
 
   include Seek::IndexPager
@@ -24,7 +25,6 @@ class SampleControlledVocabsController < ApplicationController
 
   def new
     @sample_controlled_vocab = SampleControlledVocab.new
-    @sample_controlled_vocab.sample_controlled_vocab_terms << SampleControlledVocabTerm.new
     respond_with(@sample_controlled_vocab)
   end
 
@@ -36,11 +36,15 @@ class SampleControlledVocabsController < ApplicationController
     @sample_controlled_vocab = SampleControlledVocab.new(cv_params)
     respond_to do |format|
       if @sample_controlled_vocab.save
+        Rails.logger.info("Sample Controlled Vocab Saved")
         format.html { redirect_to @sample_controlled_vocab, notice: 'The sample controlled vocabulary was successfully created.' }
         format.json { render json: @sample_controlled_vocab, status: :created, location: @sample_controlled_vocab, include: [params[:include]]}
+        format.js { render layout: false, content_type: 'text/javascript' }
       else
+        Rails.logger.info("Sample Controlled Vocab failed to save")
         format.html { render action: 'new' }
         format.json { render json: json_api_errors(@sample_controlled_vocab), status: :unprocessable_entity}
+        format.js { render layout: false, content_type: 'text/javascript' }
       end
     end
   end
@@ -69,6 +73,46 @@ class SampleControlledVocabsController < ApplicationController
       end
     end
   end
+
+  def fetch_ols_terms
+    error_msg = nil
+    begin
+      source_ontology = params[:source_ontology_id]
+      root_uri = params[:root_uri]
+
+      raise 'No root URI provided' if root_uri.blank?
+
+      client = Ebi::OlsClient.new
+      terms = client.all_descendants(source_ontology, root_uri)
+    rescue Exception=>e
+      error_msg = e.message
+    end
+
+    respond_to do |format|
+      if error_msg
+        format.json { render json:{errors:[{details:error_msg}]}, status: :unprocessable_entity}
+      else
+        format.json { render json:terms.to_json}
+      end
+
+    end
+  end
+
+  def typeahead
+    scv = SampleControlledVocab.find(params[:scv_id])
+    results = scv.sample_controlled_vocab_terms.where("LOWER(label) like :query OR LOWER(iri) LIKE :query",
+                                                      query: "%#{params[:query].downcase}%").limit(params[:limit] || 100)
+    items = results.map do |term|
+      { id: term.label,
+        name: term.label,
+        iri: term.iri }
+    end
+
+    respond_to do |format|
+      format.json { render json: items.to_json }
+    end
+  end
+
 
   private
 

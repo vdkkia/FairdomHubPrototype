@@ -50,6 +50,9 @@
 <%= render partial: 'assets/manage_specific_attributes', locals:{f:f, :object => object} if show_form_manage_specific_attributes? && showDetails==1%>
 
 <%= f.fancy_multiselect :publications, { other_projects_checkbox: true }  if showDetails==1%>
+<%= render :partial=> "assets/discussion_links_form", :locals=>{:resource => @study} -%>
+
+<%#= render partial: 'custom_metadata/custom_metadata_fields_form_input', locals:{f:f, resource:@study} %>
 
 <%= form_submit_buttons(@study) if showDetails==1 %>
 

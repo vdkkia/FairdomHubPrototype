@@ -13,10 +13,10 @@ class SampleControlledVocab < ApplicationRecord
   belongs_to :repository_standard, inverse_of: :sample_controlled_vocabs
 
   validates :title, presence: true, uniqueness: true
+  validates :ols_root_term_uri, url: { allow_blank: true }
 
   accepts_nested_attributes_for :sample_controlled_vocab_terms, allow_destroy: true
   accepts_nested_attributes_for :repository_standard, :reject_if => :check_repository_standard
-
 
   grouped_pagination
 
@@ -54,4 +54,5 @@ class SampleControlledVocab < ApplicationRecord
     end
     return false
   end
+  
 end

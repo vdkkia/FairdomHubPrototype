@@ -53,6 +53,7 @@ Rails.application.config.assets.precompile += [
     "appended/*.css",
     "jquery.flowchart.js",
     "jquery.flowchart.css",
-    "publications"
+    "publications",
+    'controlled_vocabs.js'
 ]
 

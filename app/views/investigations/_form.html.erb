@@ -30,4 +30,8 @@
 
 <%= f.fancy_multiselect :publications, { other_projects_checkbox: true } if showDetails==1 %>
 
-<%= form_submit_buttons(@investigation) if showDetails==1 %>
+<%= render :partial=> "assets/discussion_links_form", :locals=>{:resource => @investigation} -%>
+
+<!-- custom metadata experiment end -->
+
+<%= form_submit_buttons(@investigation) %>

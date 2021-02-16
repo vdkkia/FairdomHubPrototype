@@ -137,10 +137,9 @@ gem 'bundler', '>= 1.8.4'
 gem 'ro-crate-ruby', git: 'https://github.com/fbacall/ro-crate-ruby.git'
 
 gem 'git'
-
 gem 'redcarpet'
-
 gem 'i18n-js'
+gem 'whenever', '~> 1.0.0', require: false
 
 gem 'progressbar'
 
@@ -176,13 +175,14 @@ group :test do
   gem 'ruby-prof'
   gem 'test-prof'
   gem 'rails-perftest'
-  gem 'minitest', '5.10.3'
+  gem 'minitest', '~> 5.14'
   gem 'minitest-reporters'
   gem 'sunspot_matchers'
   gem 'database_cleaner', '~> 1.7.0'
   gem 'vcr', '~> 2.9'
   gem 'rails-controller-testing'
   gem 'simplecov'
+  gem 'whenever-test'
 end
 
 group :test, :development do
