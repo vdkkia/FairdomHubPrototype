@@ -380,16 +380,7 @@
 }
 
 .tableSeparate {
-    color: transparent !important;
-    /* background-color: white !important; */
-    border-right: 1px #aaa dashed !important;
-    /* border-left: 1px #777 dashed !important; */
-    border-top-width: 0 !important;
-    border-bottom-width: 0 !important;
-    max-width: 0 !important;
-    width: 0 !important;
-    padding: 0 !important;
-    background-color: #f0f0f0 !important
+    border-left: 1px #aaa dashed !important;
 }
 
 .headerSeparator {

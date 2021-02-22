@@ -65,7 +65,6 @@ function findSampleVal(row, key) {
   let sampleId = "";
   let text = "";
   $j.each(row, (n, samplePart) => {
-
     if (key.sample_type_id == samplePart.sampleTypeid) {
       text = samplePart.data[key.title];
       sampleId = samplePart.sampleId;
@@ -113,13 +112,17 @@ function consolidateSamples(data) {
 function validateCells(cls) {
   // Checks which cells are rquired and not filled yet
   let valid = true;
-  const required = $j.map($j(cls + " .downHeader th").get(), (x, i) => !x.children.length > 0);
+  let error = [];
+  const required = $j.map(
+    $j(cls + " .downHeader th:not(:first)").get(),
+    (x, i) => $j(x).attr("optional") == "false"
+  );
   const rows = $j(cls + " tbody tr").get();
   $j.each(rows, (i, row) => {
     if (!$j(row).attr("delete")) {
-      const tds = $j(row).find("td").get();
-      $j.each(tds, (j, td) => {
+      $j.each($j(row).find("td:not(:first)"), (j, td) => {
         if (required[j] && $j(td).html() == "") {
+          error.push(getPlainText($j(cls + ` .downHeader th:nth-child(${$j(td).index() + 1})`).html()));
           $j(td).addClass("errorCell");
           valid = false;
         } else {
@@ -128,12 +131,13 @@ function validateCells(cls) {
       });
     }
   });
-  return valid;
+  return { valid, error: error.join(", ") };
 }
 
 function saveSamples(cls) {
-  if (!validateCells(cls)) {
-    alert("Please fill the required fields.");
+  const res = validateCells(cls);
+  if (!res.valid) {
+    alert("Please fill the required fields: " + "\n" + res.error);
     return;
   }
   // Get the new list of sample types and samples with their attributes
@@ -160,7 +164,7 @@ function saveSamples(cls) {
   //----------------SAMPLES CREATE-----------------
   const createSamples = $j.grep(samples, (x) => !x.sampleId && !x.delete);
   console.log("createSamples", createSamples);
-  createBatchSample(createSamples)
+  createBatchSample(createSamples);
   //----------------SAMPLES DELETE-----------------
   const deleteSamples = $j.grep(samples, (x) => x.delete && x.sampleId);
   console.log("deleteSamples", deleteSamples);
@@ -252,10 +256,10 @@ function createBatchSample(samples) {
   });
   let params = {};
   params.onSuccess = (s) => {
-    console.log("Batch sample create result: " + s.data);
+    console.log("Batch sample create result: " + JSON.stringify(s));
   };
   params.onError = (e) => console.log(e);
-  params.data = JSON.stringify(data);
+  params.data = JSON.stringify({ data });
   ajaxCall("/samples/batch_create/", "POST", params);
 }
 
@@ -387,13 +391,12 @@ function hideAttributes(cls) {
   $j.each($j(cls + " .downHeader th"), (i, th) => {
     const title = getPlainText($j(th).html());
     const sampleTypeId = $j(th).attr("data-sampletypeid");
-    const condition = hiddenAttrs.includes(title) || hiddenSampleTypes.includes(sampleTypeId);
-    !condition && colSpan++;
-    hideCells(cls, condition, th);
+    const toHide = hiddenAttrs.includes(title) || hiddenSampleTypes.includes(sampleTypeId);
+    hideCells(cls, toHide, th);
     if (i > 0 && (sampleTypeId != prevSampleTypeId || i == headerCount)) {
       $j(th).addClass("tableSeparate");
       addTopHeaderCell(cls, colSpan, prevSampleTypeId, itemCounter);
-      colSpan = 0;
+      colSpan = 1;
       itemCounter++;
       const status = hiddenSampleTypes.includes(prevSampleTypeId) ? false : true;
       $j(cls + " .topHeader th")
@@ -406,6 +409,8 @@ function hideAttributes(cls) {
           .addClass("tableSeparate");
       });
       prevSampleTypeId = sampleTypeId;
+    } else {
+      if (!toHide) colSpan++;
     }
   });
 }
@@ -414,13 +419,13 @@ function getPlainText(html) {
   return $j.trim(html.replace(/<a( |>).*?<\/a>/gi, ""));
 }
 
-function hideCells(cls, condition, cell) {
+function hideCells(cls, toHide, cell) {
   $j.each($j(cls + " tbody tr"), (i, tr) => {
     const v = $j(tr).find(`td:eq(${$j(cell).index()})`);
-    if (condition) v.hide();
+    if (toHide) v.hide();
     else v.show();
   });
-  if (condition) $j(cell).hide();
+  if (toHide) $j(cell).hide();
   else $j(cell).show();
 }
 
@@ -643,7 +648,9 @@ function saveDesign() {
   };
   let attr = characteristics[$j("#sourceSelect").children("option:selected").val()].attributes;
   const title = `${$j("#std-title span").html()}_source_sample_type`;
-  createSampleType(sampleTypeData(attr, title), callBack);
+  const t = sampleTypeData(attr, title);
+  console.log(t);
+  createSampleType(t, callBack);
 }
 
 // loads sample source table header
