@@ -61,9 +61,7 @@ class SinglePagesController < ApplicationController
       flowchart = Flowchart.where(study_id: params[:study_id]).first
       study = Study.where(id: params[:study_id]).first
       assay_ids = study.assays.select { |a| a.sops.length > 0 } .collect{|a| a.id.to_s}
-      # assay_ids = assays.collect{|u|u.id.to_s}
       if flowchart.nil?
-        # items = assays.map.with_index {|n,i| {id: n.id.to_s, left: i*180+40, top: i%2==0 ? 50 : 100}}
         return render json: {error:"no flowchart" }, status: :unprocessable_entity
       else
         #Filters items that don't exist anymore
@@ -72,7 +70,6 @@ class SinglePagesController < ApplicationController
       operators = items.map {|item| create_operator(item,study)}
       links = items.drop(1).map.with_index {|item, i| create_link(i)}
       flowchart_data = {operators: operators, links: links, operatorTypes:{}}
-      # render json: {status: :ok, data: flowchart_data }
     rescue Exception => e
       error = e.message
     end
@@ -163,11 +160,7 @@ class SinglePagesController < ApplicationController
       source_list.push({title: item.title, type: item.repo_type, 
         repoId: item.id, attributes: 
         item.sample_controlled_vocabs.map do |term|
-          { id: term.id,
-          title: term.title,
-          shortName: term.short_name,
-          des: term.description,
-          required: term.required}
+          { id: term.id, title: term.title, shortName: term.short_name, des: term.description, required: term.required }
         end
       })
     end
