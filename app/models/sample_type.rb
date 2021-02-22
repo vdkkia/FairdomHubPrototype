@@ -33,7 +33,7 @@ class SampleType < ApplicationRecord
 
   belongs_to :contributor, class_name: 'Person'
 
-  has_one :assay
+  has_many :assays
 
   validates :title, presence: true
   validates :title, length: { maximum: 255 }
