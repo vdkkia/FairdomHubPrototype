@@ -10,7 +10,7 @@ class SinglePagesController < ApplicationController
     @investigation = Investigation.new({})
     @study = Study.new({})
     @assay = Assay.new({})
-    @sourceTypes = load_source_types
+    @sourceTypes = load_templates
 
     respond_to do |format|
       format.html
@@ -154,18 +154,20 @@ class SinglePagesController < ApplicationController
       fromSubConnector: "0",toOperator: index + 1, toConnector:"input_0",toSubConnector: "0"}
   end
 
-  def load_source_types
-    source_list = []
-    RepositoryStandard.all().each do |item|
-      source_list.push({title: item.title, type: item.repo_type, 
-        repoId: item.id, attributes: 
-        item.sample_controlled_vocabs.map do |term|
-          { id: term.id, title: term.title, shortName: term.short_name, des: term.description, required: term.required }
-        end
-      })
-    end
-    source_list
-  end
+  # Moved to application_helper
+
+  # def load_templates
+  #   source_list = []
+  #   RepositoryStandard.all().each do |item|
+  #     source_list.push({title: item.title, type: item.repo_type, 
+  #       repoId: item.id, attributes: 
+  #       item.sample_controlled_vocabs.map do |term|
+  #         { id: term.id, title: term.title, shortName: term.short_name, des: term.description, required: term.required }
+  #       end
+  #     })
+  #   end
+  #   source_list
+  # end
 
   def load_headers (assay, source)
     # No assay is associated with the source
