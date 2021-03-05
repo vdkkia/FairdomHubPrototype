@@ -122,7 +122,11 @@
     white-space: nowrap;
     font-weight: normal;
     padding: 6px;
+    position: sticky;
+    top: 0;
+    z-index: 1;
 }
+
 
 .tableXs thead>tr:nth-child(1) th {
     text-align: left;

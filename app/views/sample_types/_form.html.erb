@@ -68,7 +68,7 @@
 
       <div role="tabpanel" class="tab-pane fade" id="from-existing-templates">
        <h3>Existing templates</h3>
-        <%= folding_panel('Add custom attribute', false, {help_text: "Add costom attributes", :body_options => {:id => 'add_custom_attribute_panel'}}) do %>
+        <%= folding_panel('Create sample type using existing template', false, {help_text: "Create sample type using existing template", :body_options => {:id => 'add_custom_attribute_panel'}}) do %>
           <div class="form-group">
             <select class="form-control" id="sourceSelect" onchange="applyTemplate();">
             </select>
@@ -195,7 +195,7 @@
       const select = "<input checked type='checkbox'>"
       const name = $j("#attribute-name").val()
       if(!name){
-        alert("Values should not be empty!")
+        alert("The value should not be empty!")
         return
       }
       $j("#sourceAttribs tbody").append(`<tr val='${name}' required=true><td>${select}</td><td>${name}</td><td></td><td></td>${removeBtn}</tr>`)
