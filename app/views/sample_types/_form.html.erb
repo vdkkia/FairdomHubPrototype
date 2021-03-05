@@ -65,6 +65,39 @@
             </div>
           </div>
       <% end %>
+
+      <div role="tabpanel" class="tab-pane fade" id="from-existing-templates">
+       <h3>Existing templates</h3>
+        <%= folding_panel('Add custom attribute', false, {help_text: "Add costom attributes", :body_options => {:id => 'add_custom_attribute_panel'}}) do %>
+          <div class="form-group">
+            <select class="form-control" id="sourceSelect" onchange="applyTemplate();">
+            </select>
+          </div>
+          <div class="form-group">
+            <table>
+              <tr>
+                <td style="padding-right:3px;min-width:300px"><input  id="attribute-name" class="form-control" placeholder="Attribute name"></td>
+                <td><button type="button" id="add_new_attribute" style="width:100%" class="btn btn-primary">Add attribute</button></td>
+              </tr>
+            </table>
+          </div>
+           <div class="attributeTable" style="max-height:300px">
+            <table class="tableXs" id="sourceAttribs" style="width:100%;">
+                <thead>
+                    <tr>
+                        <th style="width:20px;">Required</th>
+                        <th style="width:30%">Attribute</th>
+                        <th>Short name</th>
+                        <th style="width:50%">Description</th>
+                        <th style="width:20px"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+        <% end %>       
+      </div>
     </div>
 
     <p class="actions">
@@ -111,5 +144,69 @@
         $j('#attribute-table').on('change', '.sample-type-is-title', SampleTypes.singleIsTitle);
         $j('#attribute-table').on('change', '.sample-type-attribute-type', SampleTypes.attributeTypeChanged);
         $j('#attribute-table').on('change', '.controlled-vocab-selection', SampleTypeControlledVocab.controlledVocabChanged);
+        populateTemplates()
+        applyTemplate()
     });
+
+    function populateTemplates() {
+      $j("#sourceSelect").empty();
+      $j.each(characteristics, (key, value) => {
+        $j("#sourceSelect").append(
+          $j("<option></option>")
+            .attr("value", key)
+            .text(value.title)
+        );
+      });
+    }
+
+    const removeBtn = "<td><a href='javascript:void(0)' onClick='remove(this)'><i style='color:#b01515' class='glyphicon glyphicon-remove'></i></a></td>"
+    function applyTemplate() {
+      let i = $j("#sourceSelect").val();
+      $j("#sourceAttribs tbody").empty();
+      $j.each(characteristics[i].attributes, (k, attr) => {
+        const newRow = `<td><input class='template-input' ${attr.required?'disabled checked':''} type='checkbox'/></td>`
+        const title = attr.required ? "<strong>" + attr.title + "*" + "</strong>" : attr.title;
+        $j("#sourceAttribs tbody").append(
+          `<tr val='${attr.title}' cv_id=${attr.id}>${newRow}<td>${title}</td><td>
+          ${attr.shortName}</td><td>${attr.des}</td>${attr.required?'<td></td>':removeBtn}</tr>`
+        );
+      });
+    }
+
+    $j('#new_sample_type').submit(function() {
+      if($j("#from-existing-templates").hasClass('active'))
+      {
+        const baseElement = '<input hidden type="text" name="sample_type[sample_attributes_attributes][%][##]"/>'
+        const createElement = (i,name) => $j(baseElement.replace('%',i).replace('##',name))
+        $j('#sourceAttribs tbody tr').each((i, tr) => {
+          const cv_id = $j(tr).attr("cv_id")
+          $j(this).append(createElement(i, "pos").val(i));
+          $j(this).append(createElement(i, "title").val($j(tr).attr("val")));
+          $j(this).append(createElement(i, "required").val($j(tr).find("td:first-child input").is(":checked")));
+          $j(this).append(createElement(i, "is_title").val(i==0));
+          $j(this).append(createElement(i, "sample_attribute_type_id").val(cv_id ? 18 : 7));
+          $j(this).append(createElement(i, "sample_controlled_vocab_id").val(cv_id));
+        })
+      }
+      return true;
+    });
+
+    $j("#add_new_attribute").on("click", function(){
+      const select = "<input checked type='checkbox'>"
+      const name = $j("#attribute-name").val()
+      if(!name){
+        alert("Values should not be empty!")
+        return
+      }
+      $j("#sourceAttribs tbody").append(`<tr val='${name}' required=true><td>${select}</td><td>${name}</td><td></td><td></td>${removeBtn}</tr>`)
+    })
+
+    function remove(e){
+      $j(e).closest("tr").remove()
+    }
+
+
+
+    const templates = <%= load_templates().to_json.html_safe %>
+    const characteristics =  $j(templates).map((i,x)=>{if(x.type=="study") return x}).get()
 </script>

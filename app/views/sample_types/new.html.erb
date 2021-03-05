@@ -15,6 +15,9 @@
     <li role="presentation" <%= 'class="active"'.html_safe if tab == 'from-template' -%>>
       <a href="#from-template" aria-controls="manual" role="tab" data-toggle="tab">Use spreadsheet template</a>
     </li>
+     <li role="presentation" <%= 'class="active"'.html_safe if tab == 'from-existing-templates' -%>>
+      <a href="#from-existing-templates" aria-controls="from-existing-templates" role="tab" data-toggle="tab">Existing templates</a>
+    </li>
   </ul>
 
   <%= render partial: 'sample_types/form', locals: { tab: tab } %>
@@ -27,11 +30,13 @@
     var switchFormTarget = function () {
       var form = $j('#new_sample_type');
       var id = $j('.tab-pane.active', form)[0].id;
-      $j('.tab-pane :input', form).attr('disabled', true);
-      $j('.tab-pane.active :input', form).attr('disabled', false);
+      $j('.tab-pane :input:not(".template-input")', form).attr('disabled', true);
+      $j('.tab-pane.active :input:not(".template-input")', form).attr('disabled', false);
 
       if (id == 'from-template') {
         form[0].action = '<%= create_from_template_sample_types_path -%>';
+      } else if (id == 'from-existing-templates'){
+        
       } else {
         form[0].action = '<%= sample_types_path -%>';
       }
