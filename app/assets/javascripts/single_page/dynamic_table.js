@@ -576,7 +576,7 @@ function remove_col(e) {
   }
 }
 
-function addSourcesOptions() {
+function populateTemplates() {
   $j("#sourceSelect").empty();
   $j.each(characteristics, (key, value) => {
     $j("#sourceSelect").append(
@@ -588,7 +588,7 @@ function addSourcesOptions() {
   });
 }
 
-function sourceChange() {
+function applyTemplate() {
   let i = $j("#sourceSelect").val();
   $j("#sourceAttribs tbody").empty();
   $j("#sourceSelect").val(i);
@@ -658,7 +658,7 @@ function loadDesign() {
   let params = {};
   params.onSuccess = (s) => {
     if (s.data) loadSampleTableHeader(s.data, ".sourceSampleTable");
-    else sourceChange();
+    else applyTemplate();
   };
   params.onError = () => console.error(e);
   params.dataType = "json";

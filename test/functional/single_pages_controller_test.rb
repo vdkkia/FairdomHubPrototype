@@ -91,7 +91,7 @@ class SinglePagesControllerTest < ActionController::TestCase
 
   test 'should provide the Source types list' do
     populate_source_types
-    source_types = @controller.send(:load_source_types)
+    source_types = @controller.send(:load_templates)
 
     assert_equal source_types.kind_of?(Array), true
     source_type = source_types[0]

@@ -93,7 +93,8 @@
     <script type="text/javascript">
         var selectedItem = {type:"",id:""}, pid, uid
         // let existingAssays = []
-        const sourceTypes = <%= @sourceTypes.to_json.html_safe %>
+        const sourceTypes = <%= load_templates().to_json.html_safe %>
+        // const sourceTypes = <%= @sourceTypes.to_json.html_safe %>
         // console.log("sourceTypes",sourceTypes)
         let characteristics =  $j(sourceTypes).map((i,x)=>{if(x.type=="study") return x}).get()
         let AssayTypes = $j(sourceTypes).map((i,x)=>{if(x.type=="assay") return x}).get()
@@ -108,7 +109,7 @@
 
             init_flowchart()
             addAssayTypeOptions()
-            addSourcesOptions()
+            populateTemplates()
 
             $j("a:contains('Cancel')").click(function (e) {
                 e.preventDefault();
