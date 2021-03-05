@@ -103,6 +103,14 @@
     padding: 6px;
 }
 
+.tableXs td:first-child {
+    text-align: center;
+}
+
+.tableXs td:first-child>input:enabled {
+    cursor: pointer
+}
+
 .tableXs tbody>tr:last-child td {
     border-bottom: none
 }
@@ -404,4 +412,14 @@
 .disabled {
     pointer-events: none;
     opacity: 0.4;
+}
+
+.attributeTable {
+    max-height: 200px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    border-radius: 5px;
+    border: 1px #ddd solid;
+    margin-top: 10px;
+    margin-bottom: 10px
 }
