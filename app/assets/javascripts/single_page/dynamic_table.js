@@ -54,9 +54,9 @@ function loadSampleData(data, headers, cls) {
   });
   // Set the Auto Complete
   $j.each($j(cls + " tbody tr td:not(:first-child)"), (i, k) => {
-    const sample_controlled_vocab_id = $j(cls + ` .downHeader th:nth-child(${$j(k).index() + 1})`).attr(
-      "sample_controlled_vocab_id"
-    );
+    const sample_controlled_vocab_id = $j(`${cls} .downHeader th`)
+    .eq(i + 1)
+    .attr("sample_controlled_vocab_id");
     setAutoComplete(k, sample_controlled_vocab_id);
   });
 }
@@ -309,10 +309,8 @@ function addRow(table) {
   $j(table + " tbody").append(`<tr link_id=${link_id} data-new="true">${newRow}</tr>`);
   // Set the Auto Complete
   $j.each($j(table + " tbody tr:last td:not(:first-child)"), (i, k) => {
-    const sample_controlled_vocab_id = $j(k)
-      .closest("table")
-      .find("th")
-      .eq($j(k).index())
+    const sample_controlled_vocab_id = $j(`${table} .downHeader th`)
+      .eq(i + 1)
       .attr("sample_controlled_vocab_id");
     setAutoComplete(k, sample_controlled_vocab_id);
   });
