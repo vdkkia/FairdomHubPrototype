@@ -37,6 +37,8 @@ Rails.application.config.assets.precompile += [
     'single_page/index',
     'single_page/dynamic_table',
     'single_page/flowchart',
+    'single_page/select2.full.min',
+    'single_page/select2.min.css',
     'tablesorter/jquery-latest.js',
     'tablesorter/jquery.tablesorter.js',
     'multi_step_wizard.js',

@@ -163,6 +163,7 @@
     function applyTemplate() {
       let i = $j("#sourceSelect").val();
       $j("#sourceAttribs tbody").empty();
+      if (characteristics.length === 0) return;
       $j.each(characteristics[i].attributes, (k, attr) => {
         const newRow = `<td><input class='template-input' ${attr.required?'disabled checked':''} type='checkbox'/></td>`
         const title = attr.required ? "<strong>" + attr.title + "*" + "</strong>" : attr.title;

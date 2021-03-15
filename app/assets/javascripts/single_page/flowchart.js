@@ -302,9 +302,29 @@ const removeBlock = () => {
 
 const addAssayTypeOptions = () => {
   $j("#assayType").empty();
-  $j.each(AssayTypes, (key, value) => {
-    $j("#assayType").append($j("<option></option>").attr("value", key).text(value.title));
-  });
+    let organized = AssayTypes.reduce((obj, item) => {
+      obj[item.group] = obj[item.group] || [];
+      obj[item.group].push(item);
+      return obj;
+    }, {});
+  
+    let counter = 0
+    $j.each(Object.keys(organized), (i, item) => {
+      const elem = $j(`<optgroup label=${item}></optgroup>`);
+      $j.each(organized[item], (j, subItem) => {
+        elem.append(
+          $j(`<option>${subItem.title}</option>`)
+            .attr("value", counter)
+            .text(item.title)
+        );
+        counter++
+      });
+      $j("#assayType").append(elem);
+    });
+
+  // $j.each(AssayTypes, (key, value) => {
+  //   $j("#assayType").append($j("<option></option>").attr("value", key).text(value.title));
+  // });
   if (AssayTypes[0])
     $j.each(AssayTypes[0].attributes, (k, attr) => {
       const newRow = attr.required

@@ -1,8 +1,11 @@
 <div id="content-wrapper">
     <div class="inner">
         <%= folding_panel('Source characteristics', false, {help_text: "Characteristics help text here", :body_options => {:id => 'source_characteristics_panel'}}) do %>
-        <select class="form-control" id="sourceSelect" onchange="applyTemplate();">
-        </select>
+        <label for="sourceSelect" style="width:100%">
+            Select the source characteristics.
+            <select class="sourceCharacteristics form-control" style="width: 100%" id="sourceSelect" onchange="applyTemplate();">
+            </select>
+        </label>
         </br>
         <div class="attributeTable">
             <table class="tableXs" id="sourceAttribs" style="width:100%;">

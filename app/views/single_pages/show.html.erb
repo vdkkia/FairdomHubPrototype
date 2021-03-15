@@ -2,6 +2,8 @@
 <%= javascript_include_tag "single_page/dynamic_table" %>
 <%= javascript_include_tag "single_page/flowchart" %>
 <%= javascript_include_tag "project_folders" %>
+<%= javascript_include_tag "single_page/select2.full.min" %>
+<%= stylesheet_link_tag "single_page/select2.min.css" %>
 <%
     default_folder = initial_folder(@project)
 %>
@@ -95,10 +97,10 @@
         // let existingAssays = []
         const sourceTypes = <%= load_templates().to_json.html_safe %>
         // const sourceTypes = <%= @sourceTypes.to_json.html_safe %>
-        // console.log("sourceTypes",sourceTypes)
+        console.log("sourceTypes",sourceTypes)
         let characteristics =  $j(sourceTypes).map((i,x)=>{if(x.type=="study") return x}).get()
         let AssayTypes = $j(sourceTypes).map((i,x)=>{if(x.type=="assay") return x}).get()
-        // console.log("characteristics", characteristics)
+        console.log("characteristics", characteristics)
         // console.log("AssayTypes", AssayTypes)
 
         $j(document).ready(function() {
@@ -116,6 +118,9 @@
                 $j("#data-file-modal-inv").modal("hide");
                 $j("#data-file-modal-std").modal("hide");
             });
+            $j('.sourceCharacteristics').select2();
+            $j('.assayType').select2();
+            
         });
         
     </script>

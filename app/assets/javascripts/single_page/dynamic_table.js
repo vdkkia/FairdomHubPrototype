@@ -55,8 +55,8 @@ function loadSampleData(data, headers, cls) {
   // Set the Auto Complete
   $j.each($j(cls + " tbody tr td:not(:first-child)"), (i, k) => {
     const sample_controlled_vocab_id = $j(`${cls} .downHeader th`)
-    .eq(i + 1)
-    .attr("sample_controlled_vocab_id");
+      .eq(i + 1)
+      .attr("sample_controlled_vocab_id");
     setAutoComplete(k, sample_controlled_vocab_id);
   });
 }
@@ -576,13 +576,25 @@ function remove_col(e) {
 
 function populateTemplates() {
   $j("#sourceSelect").empty();
-  $j.each(characteristics, (key, value) => {
-    $j("#sourceSelect").append(
-      $j("<option></option>")
-        .attr("value", key)
-        // .attr("sampleCVId", value.sampleCVId)
-        .text(value.title)
-    );
+  let organized = characteristics.reduce((obj, item) => {
+    obj[item.group] = obj[item.group] || [];
+    obj[item.group].push(item);
+    return obj;
+  }, {});
+
+  let counter = 0
+  $j.each(Object.keys(organized), (i, item) => {
+    const elem = $j(`<optgroup label=${item}></optgroup>`);
+    $j.each(organized[item], (j, subItem) => {
+      elem.append(
+        $j(`<option>${subItem.title}</option>`)
+          .attr("value", counter)
+          // .attr("sampleCVId", value.sampleCVId)
+          .text(item.title)
+      );
+      counter++
+    });
+    $j("#sourceSelect").append(elem);
   });
 }
 
@@ -590,6 +602,7 @@ function applyTemplate() {
   let i = $j("#sourceSelect").val();
   $j("#sourceAttribs tbody").empty();
   $j("#sourceSelect").val(i);
+  if (characteristics.length === 0) return;
   $j.each(characteristics[i].attributes, (k, attr) => {
     const newRow = attr.required
       ? "<td><input disabled checked type='checkbox'/></td>"

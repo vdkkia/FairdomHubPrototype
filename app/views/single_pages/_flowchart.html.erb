@@ -43,10 +43,12 @@
                     <div class="form-group">
                         <div class="row">
                             <div class="col-md-12">
-                                <label>Type:</label>
-                                <select class="form-control" id="assayType" onchange="asyTypeChange(this);">
-                                    <input type="hidden" id="method_type">
-                                </select>
+                                <label for="sourceSelect" style="width:100%">
+                                    Select the source characteristics.
+                                    <select class="assayType form-control" style="width: 100%" id="assayType" onchange="asyTypeChange(this);">
+                                        <input type="hidden" id="method_type">
+                                    </select>
+                                </label>
                             </div>
                         </div>
                         <div class="attributeTable">
