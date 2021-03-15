@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_15_182602) do
+ActiveRecord::Schema.define(version: 2021_03_11_114619) do
 
   create_table "activity_logs", id: :integer,  force: :cascade do |t|
     t.string "action"
@@ -1492,12 +1492,21 @@ ActiveRecord::Schema.define(version: 2021_02_15_182602) do
   end
 
   create_table "repository_standards",  force: :cascade do |t|
-    t.string "title"
-    t.string "url"
-    t.string "group_tag"
-    t.string "repo_type"
-    t.text "description"
-    t.index ["title", "group_tag"], name: "index_repository_standards_title_group_tag"
+    t.string "name"
+    t.string "group"
+    t.integer "group_order"
+    t.string "temporary_name"
+    t.string "template_version"
+    t.string "isa_config"
+    t.string "isa_measurement_type"
+    t.string "isa_technology_type"
+    t.string "isa_protocol_type"
+    t.string "repo_schema_id"
+    t.string "organism"
+    t.string "level"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name", "group"], name: "index_repository_standards_name_group"
   end
 
   create_table "resource_publish_logs", id: :integer,  force: :cascade do |t|
@@ -1574,6 +1583,7 @@ ActiveRecord::Schema.define(version: 2021_02_15_182602) do
     t.boolean "required"
     t.string "short_name"
     t.integer "repository_standard_id"
+    t.string "version"
   end
 
   create_table "sample_resource_links", id: :integer,  force: :cascade do |t|
