@@ -514,8 +514,8 @@ end
 
  def load_templates
     source_list = []
-    RepositoryStandard.all().each do |item|
-      source_list.push({title: item.title, type: item.repo_type, 
+    RepositoryStandard.all().order(:group).each do |item|
+      source_list.push({title: item.name, type: item.level, group: item.group,
         repoId: item.id, attributes: 
         item.sample_controlled_vocabs.map do |term|
           { id: term.id, title: term.title, shortName: term.short_name, des: term.description, required: term.required }
