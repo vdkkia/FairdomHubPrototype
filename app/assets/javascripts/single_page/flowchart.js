@@ -283,7 +283,7 @@ function saveAssay() {
       title: $j("#modalMethodTitle").val(),
       description: $j("#modalMethodDes").val(),
     },
-    sampleTypeAttrId: $j("#assayType").children("option:selected").val(),
+    sampleTypeAttrId: $j("#assayType").find(":selected").val(),
   });
   console.log(AssayDetails);
   //Add the method detail:
@@ -302,25 +302,21 @@ const removeBlock = () => {
 
 const addAssayTypeOptions = () => {
   $j("#assayType").empty();
-    let organized = AssayTypes.reduce((obj, item) => {
-      obj[item.group] = obj[item.group] || [];
-      obj[item.group].push(item);
-      return obj;
-    }, {});
-  
-    let counter = 0
-    $j.each(Object.keys(organized), (i, item) => {
-      const elem = $j(`<optgroup label=${item}></optgroup>`);
-      $j.each(organized[item], (j, subItem) => {
-        elem.append(
-          $j(`<option>${subItem.title}</option>`)
-            .attr("value", counter)
-            .text(item.title)
-        );
-        counter++
-      });
-      $j("#assayType").append(elem);
+  let organized = AssayTypes.reduce((obj, item) => {
+    obj[item.group] = obj[item.group] || [];
+    obj[item.group].push(item);
+    return obj;
+  }, {});
+
+  let counter = 0;
+  $j.each(Object.keys(organized), (i, item) => {
+    const elem = $j(`<optgroup label=${item}></optgroup>`);
+    $j.each(organized[item], (j, subItem) => {
+      elem.append($j(`<option>${subItem.title}</option>`).attr("value", counter).text(item.title));
+      counter++;
     });
+    $j("#assayType").append(elem);
+  });
 
   // $j.each(AssayTypes, (key, value) => {
   //   $j("#assayType").append($j("<option></option>").attr("value", key).text(value.title));
@@ -337,12 +333,14 @@ const addAssayTypeOptions = () => {
     });
 };
 
-const asyTypeChange = (i) => {
+const asyTypeChange = () => {
+  const i = $j("#assayType").find(":selected").val();
+
   // $j("#attribs").empty()
   $j("#assayAttribs tbody").empty();
-  $j("#method_type").val(i.value);
-  $j("#assayTitle").val(AssayTypes[i.value].title);
-  $j.each(AssayTypes[i.value].attributes, (k, attr) => {
+  $j("#method_type").val(i);
+  $j("#assayTitle").val(AssayTypes[i].title);
+  $j.each(AssayTypes[i].attributes, (k, attr) => {
     const newRow = attr.required
       ? "<td><input disabled checked type='checkbox'/></td>"
       : "<td><input type='checkbox'/></td>";

@@ -657,7 +657,9 @@ function saveDesign() {
     params.data = JSON.stringify(data);
     ajaxCall(`/single_pages/${pid}/update_flowchart`, "POST", params);
   };
-  let attr = characteristics[$j("#sourceSelect").children("option:selected").val()].attributes;
+
+  let attr = characteristics[$j('#sourceSelect').find(':selected').val()].attributes;
+  
   const title = `${$j("#std-title span").html()}_source_sample_type`;
   const t = sampleTypeData(attr, title);
   console.log(t);
