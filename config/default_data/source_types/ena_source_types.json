@@ -20,7 +20,7 @@
           "name": "Source Name",
           "description": "Sources are considered as the starting biological material used in a study.",
           "dataType": "String",
-          "required": "true"
+          "required": true
         },
         {
           "name": "tax_id",
