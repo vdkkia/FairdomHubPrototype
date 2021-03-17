@@ -113,7 +113,6 @@
           "name": "geographic location (country and/or sea)",
           "description": "The geographical origin of the sample as defined by the country or sea. Country or sea names should be chosen from the INSDC country list (http://insdc.org/country.html).",
           "required": false,
-          "ontology": "http://insdc.org/country.html",
           "dataType": "string",
           "CVList": [
             "Afghanistan",
@@ -912,7 +911,6 @@
           "name": "geographic location (country and/or sea)",
           "description": "The geographical origin of the sample as defined by the country or sea. Country or sea names should be chosen from the INSDC country list (http://insdc.org/country.html).",
           "required": true,
-          "ontology": "http://insdc.org/country.html",
           "dataType": "string",
           "CVList": [
             "Afghanistan",
