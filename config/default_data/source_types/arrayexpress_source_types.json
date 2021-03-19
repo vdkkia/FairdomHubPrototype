@@ -739,7 +739,7 @@
           "description": "Used as an attribute column following Source Name, Sample Name, Extract Name, or Labeled Extract Name. This column contains terms describing the type of each material, for examples: whole organism, organism part, cell, total RNA.",
           "required": true,
           "ontology": null,
-          "CVList": ["whole organism, organism part, RNA, DNA, cell"]
+          "CVList": ["whole organism", "organism part", "RNA", "DNA", "cell"]
         },
         {
           "name": "protocol type",
