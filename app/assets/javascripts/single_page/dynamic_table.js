@@ -582,7 +582,7 @@ function populateTemplates() {
     return obj;
   }, {});
 
-  let counter = 0
+  let counter = 0;
   $j.each(Object.keys(organized), (i, item) => {
     const elem = $j(`<optgroup label=${item}></optgroup>`);
     $j.each(organized[item], (j, subItem) => {
@@ -592,7 +592,7 @@ function populateTemplates() {
           // .attr("sampleCVId", value.sampleCVId)
           .text(item.title)
       );
-      counter++
+      counter++;
     });
     $j("#sourceSelect").append(elem);
   });
@@ -632,7 +632,7 @@ function sampleTypeData(attributes, title, assayId = null) {
     .map((i, x) => ({
       title: x.title.toLowerCase(),
       sample_attribute_type: {
-        id: "18",
+        id: x.id ? "18" : "7",
       },
       sample_controlled_vocab_id: x.id,
       required: x.required,
@@ -658,8 +658,8 @@ function saveDesign() {
     ajaxCall(`/single_pages/${pid}/update_flowchart`, "POST", params);
   };
 
-  let attr = characteristics[$j('#sourceSelect').find(':selected').val()].attributes;
-  
+  let attr = characteristics[$j("#sourceSelect").find(":selected").val()].attributes;
+
   const title = `${$j("#std-title span").html()}_source_sample_type`;
   const t = sampleTypeData(attr, title);
   console.log(t);
