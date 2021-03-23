@@ -14,11 +14,14 @@ services:
   seek: # The SEEK application
     #build: .
 
-    image: fairdom/seek:master
+    # image: fairdom/seek:master
 
     container_name: seek
     command: docker/entrypoint.sh
     restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
     environment:
       RAILS_ENV: production
       SOLR_PORT: 8983
@@ -29,7 +32,7 @@ services:
       - seek-filestore:/seek/filestore
       - seek-cache:/seek/tmp/cache
     ports:
-      - "3000:3000"
+      - "3001:3000"
     depends_on:
       - db
       - solr
