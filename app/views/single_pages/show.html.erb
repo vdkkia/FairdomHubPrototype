@@ -4,6 +4,7 @@
 <%= javascript_include_tag "project_folders" %>
 <%= javascript_include_tag "single_page/select2.full.min" %>
 <%= stylesheet_link_tag "single_page/select2.min.css" %>
+<%= stylesheet_link_tag "single_page/select2.bootstrap.min.css" %>
 <%
     default_folder = initial_folder(@project)
 %>
@@ -118,8 +119,8 @@
                 $j("#data-file-modal-inv").modal("hide");
                 $j("#data-file-modal-std").modal("hide");
             });
-            $j('.sourceCharacteristics').select2();
-            $j('.assayType').select2();
+            $j('.sourceCharacteristics').select2({theme: "bootstrap"});
+            $j('.assayType').select2({theme: "bootstrap"});
             
         });
         
