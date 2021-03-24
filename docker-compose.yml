@@ -9,7 +9,7 @@ services:
     env_file:
       - docker/db.env
     volumes:
-      - seek-mysql-db:/var/lib/mysql
+      - seek-mysql-db-test:/var/lib/mysql
 
   seek_test: # The SEEK application
     build: .
@@ -26,8 +26,8 @@ services:
     env_file:
       - docker/db.env
     volumes:
-      - seek-filestore:/seek/filestore
-      - seek-cache:/seek/tmp/cache
+      - seek-filestore-test:/seek/filestore
+      - seek-cache-test:/seek/tmp/cache
     ports:
       - "3001:3001"
     depends_on:
@@ -50,8 +50,8 @@ services:
       env_file:
         - docker/db.env
       volumes:
-        - seek-filestore:/seek/filestore
-        - seek-cache:/seek/tmp/cache
+        - seek-filestore-test:/seek/filestore
+        - seek-cache-test:/seek/tmp/cache
       depends_on:
         - db_test
         - solr_test
@@ -66,15 +66,15 @@ services:
     environment:
       SOLR_JAVA_MEM: -Xms512m -Xmx1024m
     volumes:
-      - seek-solr-data:/opt/solr/server/solr/seek/data
+      - seek-solr-data-test:/opt/solr/server/solr/seek/data
 
 
 volumes:
-  seek-filestore:
+  seek-filestore-test:
     external: true
-  seek-mysql-db:
+  seek-mysql-db-test:
     external: true
-  seek-solr-data:
+  seek-solr-data-test:
     external: true
-  seek-cache:
+  seek-cache-test:
     external: true
