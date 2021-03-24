@@ -80,7 +80,7 @@ RUN rm -rf /tmp/* /var/tmp/*
 USER www-data
 
 # Network
-EXPOSE 3000
+EXPOSE 3001
 
 # Shared
 VOLUME ["/seek/filestore", "/seek/sqlite3-db", "/seek/tmp/cache"]
