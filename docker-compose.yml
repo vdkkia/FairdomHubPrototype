@@ -31,11 +31,11 @@ services:
     ports:
       - "3001:3001"
     depends_on:
-      - db
-      - solr
+      - db_test
+      - solr_test
     links:
-      - db
-      - solr
+      - db_test
+      - solr_test
 
   seek_workers_test: # The SEEK delayed job workers
       #build: .
@@ -53,11 +53,11 @@ services:
         - seek-filestore:/seek/filestore
         - seek-cache:/seek/tmp/cache
       depends_on:
-        - db
-        - solr
+        - db_test
+        - solr_test
       links:
-        - db
-        - solr
+        - db_test
+        - solr_test
 
   solr_test:
     image: fairdom/seek-solr
