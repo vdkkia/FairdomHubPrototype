@@ -609,7 +609,7 @@ function applyTemplate() {
       : "<td><input type='checkbox'/></td>";
     let title = attr.required ? "<strong>" + attr.title + "*" + "</strong>" : attr.title;
     $j("#sourceAttribs tbody").append(
-      `<tr>${newRow}<td>${title}</td><td>${attr.shortName}</td><td>${attr.des}</td></tr>`
+      `<tr>${newRow}<td>${title}</td><td>${attr.shortName || ""}</td><td>${attr.des || ""}</td></tr>`
     );
   });
   loadSampleTableHeader(characteristics[sourceSelect.value].attributes, ".sourceSampleTable");
@@ -632,7 +632,7 @@ function sampleTypeData(attributes, title, assayId = null) {
     .map((i, x) => ({
       title: x.title.toLowerCase(),
       sample_attribute_type: {
-        id: x.id ? "18" : "7",
+        title: x.id ? "Controlled Vocabulary" : "Text",
       },
       sample_controlled_vocab_id: x.id,
       required: x.required,
