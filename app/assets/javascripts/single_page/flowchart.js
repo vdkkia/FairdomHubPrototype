@@ -328,7 +328,7 @@ const addAssayTypeOptions = () => {
         : "<td><input type='checkbox'/></td>";
       let title = attr.required ? "<strong>" + attr.title + "*" + "</strong>" : attr.title;
       $j("#assayAttribs tbody").append(
-        `<tr>${newRow}<td>${title}</td><td>${attr.shortName}</td><td>${attr.des}</td></tr>`
+        `<tr>${newRow}<td>${title}</td><td>${attr.shortName || ""}</td><td>${attr.des || ""}</td></tr>`
       );
     });
 };

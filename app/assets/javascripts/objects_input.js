@@ -38,6 +38,7 @@ function loadObjectInputs() {
     const elem = $j(this);
     $j(tagsinput).on("focusout", function () {
       $j(elem).tagsinput("add", { id: input.val(), name: input.val() });
+      // TODO: use the item added event listener instead
       setTimeout(() => {
         $j(input).val("");
       }, 1);

@@ -97,12 +97,15 @@
         var selectedItem = {type:"",id:""}, pid, uid
         // let existingAssays = []
         const sourceTypes = <%= load_templates().to_json.html_safe %>
+        const templateSampleTypes = <%= @templateSampleTypes.to_json.html_safe %>
+        console.log(templateSampleTypes)
         // const sourceTypes = <%= @sourceTypes.to_json.html_safe %>
         console.log("sourceTypes",sourceTypes)
-        let characteristics =  $j(sourceTypes).map((i,x)=>{if(x.type=="study") return x}).get()
-        let AssayTypes = $j(sourceTypes).map((i,x)=>{if(x.type=="assay") return x}).get()
+        let characteristics = [...$j(sourceTypes).map((i,x)=>{if(x.type=="study") return x}).get(), ...templateSampleTypes]
+        let AssayTypes = [...$j(sourceTypes).map((i,x)=>{if(x.type=="assay") return x}).get(), ...templateSampleTypes]
+
         console.log("characteristics", characteristics)
-        // console.log("AssayTypes", AssayTypes)
+        console.log("AssayTypes", AssayTypes)
 
         $j(document).ready(function() {
             setupFoldersTree( <%= ((TreeviewBuilder.new(@project, @folders)).build_tree_data).html_safe -%> , 'demo_tree', 'draggable_folder_item');
