@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_22_125310) do
+ActiveRecord::Schema.define(version: 2021_03_11_114619) do
 
   create_table "activity_logs", id: :integer,  force: :cascade do |t|
     t.string "action"
@@ -1984,7 +1984,7 @@ ActiveRecord::Schema.define(version: 2021_02_22_125310) do
     t.index ["user_id", "can_view"], name: "index_w_auth_lookup_on_user_id_and_can_view"
   end
 
-  create_table "workflow_classes", id: :integer,  force: :cascade do |t|
+  create_table "workflow_classes",  force: :cascade do |t|
     t.string "title"
     t.text "description"
     t.string "key"
