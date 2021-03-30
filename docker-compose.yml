@@ -1,6 +1,6 @@
 version: '3'
 services:
-  db_test: # Database implementation, in this case MySQL
+  db: # Database implementation, in this case MySQL
     image: mysql:5.7
     container_name: seek-mysql
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
@@ -11,7 +11,7 @@ services:
     volumes:
       - seek-mysql-db:/var/lib/mysql
 
-  seek_test: # The SEEK application
+  seek: # The SEEK application
     build: .
 
     # image: fairdom/seek:master
@@ -26,18 +26,19 @@ services:
     env_file:
       - docker/db.env
     volumes:
+      - ./:/seek"
       - seek-filestore:/seek/filestore
       - seek-cache:/seek/tmp/cache
     ports:
-      - "3001:3001"
+      - "3001:3000"
     depends_on:
-      - db_test
-      - solr_test
+      - db
+      - solr
     links:
-      - db_test
-      - solr_test
+      - db
+      - solr
 
-  seek_workers_test: # The SEEK delayed job workers
+  seek_workers: # The SEEK delayed job workers
       #build: .
 
       image: fairdom/seek:master
@@ -53,13 +54,13 @@ services:
         - seek-filestore:/seek/filestore
         - seek-cache:/seek/tmp/cache
       depends_on:
-        - db_test
-        - solr_test
+        - db
+        - solr
       links:
-        - db_test
-        - solr_test
+        - db
+        - solr
 
-  solr_test:
+  solr:
     image: fairdom/seek-solr
     container_name: seek-solr
     restart: always
