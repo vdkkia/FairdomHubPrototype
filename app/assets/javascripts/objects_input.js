@@ -33,16 +33,17 @@ function loadObjectInputs() {
     var objects = $j(this).data("existingObjects");
     if (objects) for (var i = 0; i < objects.length; i++) $j(this).tagsinput("add", objects[i]);
 
-    const tagsinput = $j(this).siblings(".bootstrap-tagsinput");
-    const input = $j(tagsinput).find("input.tt-input");
-    const elem = $j(this);
-    $j(tagsinput).on("focusout", function () {
-      $j(elem).tagsinput("add", { id: input.val(), name: input.val() });
-      // TODO: use the item added event listener instead
-      setTimeout(() => {
-        $j(input).val("");
-      }, 1);
-    });
+    if ($j(this).data("ontology")) {
+      const tagsinput = $j(this).prev(".bootstrap-tagsinput").first();
+      const input = $j(tagsinput).find("input.tt-input").first();
+      $j(tagsinput).on("focusout", () => {
+        if (input.val().length !== 0) $j(this).tagsinput("add", { id: input.val(), name: input.val() });
+        // TODO: use the item added event listener instead
+        setTimeout(() => {
+          $j(input).val("");
+        }, 1);
+      });
+    }
   });
 }
 
