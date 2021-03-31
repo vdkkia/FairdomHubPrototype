@@ -1,0 +1,46 @@
+<script>
+  $j(document).ready(function () {
+    const distance = 200;
+
+    $j('#carousel-right').click(function () {
+      document.getElementById('carousel-control').scrollBy({ 
+        left: distance, 
+        behavior: 'smooth' 
+      });
+    });
+
+    $j('#carousel-left').click(function () {
+      document.getElementById('carousel-control').scrollBy({ 
+        left: -distance, 
+        behavior: 'smooth' 
+      });
+    });
+  });
+</script>
+
+<% who_uses_content = YAML.load(File.read(File.join(Rails.root, 'config/home', 'who_uses.yml'))) %>
+
+<div class="panel panel-default" id="home_who_uses" style="padding: 20px; position:relative">
+  <h1 class="text-center">Who is using it?</h1>
+  <div class="row">
+    <div id="carousel-control" class="carousel">
+      <% who_uses_content.each do |item| %>
+        <div class="card col-sm-12 text-center" style="flex-shrink: 0;">
+          <a class="image-link" target="_blank" href="<%= item['url'] %>">
+            <img style="width:auto;height:200px;" src='<%= item['logo'] %>'>
+          </a>
+          <h3> <%= item['title'] %> </h3>
+          <p style="font-size: larger;"> <%= item['description'] %> </p>
+          <i> <%= item['author'] %> </i>
+        </div>
+      <% end %>
+    </div>
+
+    <a id="carousel-left" href="/">
+      <span class="glyphicon glyphicon-chevron-left"></span>
+    </a>
+    <a id="carousel-right" href="/">
+      <span class="glyphicon glyphicon-chevron-right"></span>
+    </a>
+  </div>
+</div>
