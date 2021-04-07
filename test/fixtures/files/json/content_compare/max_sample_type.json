@@ -5,6 +5,7 @@
     "attributes": {
       "title": "A Maximal SampleType",
       "description": "A very new research",
+      "repository_standard_id" : null,
       "attribute_map": [
         {
           "id": "523",

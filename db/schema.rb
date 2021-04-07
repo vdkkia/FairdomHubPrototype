@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_04_07_095346) do
+ActiveRecord::Schema.define(version: 2021_04_07_115031) do
 
   create_table "activity_logs", id: :integer,  force: :cascade do |t|
     t.string "action"
@@ -1610,6 +1610,7 @@ ActiveRecord::Schema.define(version: 2021_04_07_095346) do
     t.boolean "uploaded_template", default: false
     t.integer "contributor_id"
     t.string "deleted_contributor"
+    t.integer "repository_standard_id"
   end
 
   create_table "samples", id: :integer,  force: :cascade do |t|

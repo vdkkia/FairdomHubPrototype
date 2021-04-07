@@ -2,6 +2,13 @@ class SampleTypeSerializer < BaseSerializer
   attributes :title, :description
   attribute :attribute_map
 
+  attribute :repository_standard do
+    if(object.repository_standard_id)
+      repo = RepositoryStandard.select(:id, :group, :name).find(object.repository_standard_id)
+      "#{repo.group}/#{repo.name}"
+    end
+  end
+
   attribute :tags do
     serialize_annotations(object)
   end
