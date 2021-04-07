@@ -1,0 +1,3 @@
+class IsaTag < ApplicationRecord
+
+end

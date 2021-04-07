@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_18_115608) do
+ActiveRecord::Schema.define(version: 2021_04_07_095346) do
 
   create_table "activity_logs", id: :integer,  force: :cascade do |t|
     t.string "action"
@@ -835,6 +835,11 @@ ActiveRecord::Schema.define(version: 2021_03_18_115608) do
     t.index ["project_id"], name: "index_investigations_projects_on_project_id"
   end
 
+  create_table "isa_tags",  force: :cascade do |t|
+    t.string "title"
+    t.index ["title"], name: "index_isa_tags_title"
+  end
+
   create_table "mapping_links", id: :integer,  force: :cascade do |t|
     t.string "substance_type"
     t.integer "substance_id"
@@ -1547,6 +1552,7 @@ ActiveRecord::Schema.define(version: 2021_03_18_115608) do
     t.string "original_accessor_name"
     t.integer "sample_controlled_vocab_id"
     t.integer "linked_sample_type_id"
+    t.integer "isa_tag_id"
     t.index ["sample_type_id"], name: "index_sample_attributes_on_sample_type_id"
     t.index ["unit_id"], name: "index_sample_attributes_on_unit_id"
   end

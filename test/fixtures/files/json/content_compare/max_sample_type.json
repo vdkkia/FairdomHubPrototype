@@ -22,7 +22,8 @@
           "unit": null,
           "is_title": true,
           "sample_controlled_vocab_id": null,
-          "linked_sample_type_id": null
+          "linked_sample_type_id": null,
+          "isa_tag_id": 1
         },
         {
           "id": "526",
@@ -40,7 +41,8 @@
           "unit": null,
           "is_title": false,
           "sample_controlled_vocab_id": null,
-          "linked_sample_type_id": null
+          "linked_sample_type_id": null,
+          "isa_tag_id": 2
         },
         {
           "id": "527",
@@ -58,7 +60,8 @@
           "unit": null,
           "is_title": false,
           "sample_controlled_vocab_id": null,
-          "linked_sample_type_id": null
+          "linked_sample_type_id": null,
+          "isa_tag_id": 3
         }
       ],
       "tags": [
