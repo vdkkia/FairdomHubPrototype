@@ -4,7 +4,7 @@ require 'rake'
 
 namespace :seek do
   desc "Fetch ontology terms from EBI API"
-  task :fetch_efo_terms => :environment do
+  task :populate_repository_standars => :environment do
     begin
       RepositoryStandard.delete_all
       SampleControlledVocab.delete_all
