@@ -19,10 +19,12 @@
 
 <%= render partial: 'custom_metadata/custom_metadata_attribute_input', locals:{f:f,resource:@investigation} %>
 
-<div class="form-group">
-  <%= f.label "Investigation position" -%><br/>
-  <%= f.number_field :position, :rows => 5, :class=>"form-control"  -%>
-</div>
+<% if showDetails==1%>
+  <div class="form-group">
+    <%= f.label "Investigation position" -%><br/>
+    <%= f.number_field :position, :rows => 5, :class=>"form-control"  -%>
+  </div>
+<%end%>
 
 <%= render :partial => "scales/scales_selector",:locals=>{:object=>@investigation} if show_scales? && showDetails==1 %>
 
