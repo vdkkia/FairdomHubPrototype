@@ -12,6 +12,7 @@ namespace :seek do
     
       disable_authorization_checks do
         client = Ebi::OlsClient.new
+        project = Project.find_or_create_by(title:'Default Project')
         Dir.foreach(File.join(Rails.root, 'config/default_data/source_types/')) do |filename|
           puts filename
           next if File.extname(filename) != '.json'
@@ -30,7 +31,13 @@ namespace :seek do
             isa_protocol_type: metadata["isa_protocol_type"], 
             repo_schema_id: metadata["repo_schema_id"], 
             organism: metadata["organism"], 
-            level: metadata["level"]})
+            level: metadata["level"],
+            projects:[project]})
+
+            policy = Policy.default
+            policy.save
+            repo.policy_id = policy.id
+            repo.update_column(:policy_id,policy.id)
   
             item["data"].each_with_index do |attribute, j|
               has_ontology = !attribute["ontology"].blank?
