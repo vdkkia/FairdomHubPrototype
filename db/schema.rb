@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_04_19_113306) do
+ActiveRecord::Schema.define(version: 2021_04_12_111415) do
 
   create_table "activity_logs", id: :integer,  force: :cascade do |t|
     t.string "action"
@@ -1499,7 +1499,7 @@ ActiveRecord::Schema.define(version: 2021_04_19_113306) do
   end
 
   create_table "repository_standards",  force: :cascade do |t|
-    t.string "name"
+    t.string "title"
     t.string "group"
     t.integer "group_order"
     t.string "temporary_name"
@@ -1516,7 +1516,6 @@ ActiveRecord::Schema.define(version: 2021_04_19_113306) do
     t.integer "policy_id"
     t.integer "contributor_id"
     t.text "description"
-    t.string "deleted_contributor"
     t.index ["title", "group"], name: "index_repository_standards_name_group"
   end
 
