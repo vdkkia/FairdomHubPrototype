@@ -19,7 +19,7 @@ namespace :seek do
           data_hash["data"].each do |item|
             metadata = item["metadata"]
             repo = RepositoryStandard.find_or_create_by({
-            name: metadata["name"], 
+            title: metadata["name"], 
             group: metadata["group"], 
             group_order: metadata["group_order"], 
             temporary_name: metadata["temporary_name"], 
