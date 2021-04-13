@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_18_115608) do
+ActiveRecord::Schema.define(version: 2021_04_12_111415) do
 
   create_table "activity_logs", id: :integer,  force: :cascade do |t|
     t.string "action"
@@ -1345,6 +1345,13 @@ ActiveRecord::Schema.define(version: 2021_03_18_115608) do
     t.index ["publication_id", "project_id"], name: "index_projects_publications_on_publication_id_and_project_id"
   end
 
+  create_table "projects_repository_standards",  force: :cascade do |t|
+    t.bigint "repository_standard_id"
+    t.bigint "project_id"
+    t.index ["project_id"], name: "index_projects_repository_standards_on_project_id"
+    t.index ["repository_standard_id"], name: "index_projects_repository_standards_on_repository_standard_id"
+  end
+
   create_table "projects_sample_types", id: false,  force: :cascade do |t|
     t.integer "project_id"
     t.integer "sample_type_id"
@@ -1479,13 +1486,37 @@ ActiveRecord::Schema.define(version: 2021_03_18_115608) do
     t.datetime "updated_at"
   end
 
+  create_table "repository_standard_auth_lookup", id: :integer,  force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "asset_id"
+    t.boolean "can_view", default: false
+    t.boolean "can_manage", default: false
+    t.boolean "can_edit", default: false
+    t.boolean "can_download", default: false
+    t.boolean "can_delete", default: false
+    t.index ["user_id", "asset_id", "can_view"], name: "index_repository_standard_auth_lookup_user_id_asset_id_can_view"
+    t.index ["user_id", "can_view"], name: "index_repository_standard_auth_lookup_on_user_id_and_can_view"
+  end
+
   create_table "repository_standards",  force: :cascade do |t|
     t.string "title"
-    t.string "url"
-    t.string "group_tag"
-    t.string "repo_type"
+    t.string "group"
+    t.integer "group_order"
+    t.string "temporary_name"
+    t.string "template_version"
+    t.string "isa_config"
+    t.string "isa_measurement_type"
+    t.string "isa_technology_type"
+    t.string "isa_protocol_type"
+    t.string "repo_schema_id"
+    t.string "organism"
+    t.string "level"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "policy_id"
+    t.integer "contributor_id"
     t.text "description"
-    t.index ["title", "group_tag"], name: "index_repository_standards_title_group_tag"
+    t.index ["title", "group"], name: "index_repository_standards_name_group"
   end
 
   create_table "resource_publish_logs", id: :integer,  force: :cascade do |t|
