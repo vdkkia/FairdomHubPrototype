@@ -517,7 +517,7 @@ end
  def load_templates
     source_list = []
     RepositoryStandard.all().order(:group, :group_order).each do |item|
-      source_list.push({ title: item.title, type: item.level, group: item.group,
+      source_list.push({title: item.title, type: item.level, group: item.group,
         repoId: item.id, attributes: 
         item.template_attributes.map do |attribute|
           { 
