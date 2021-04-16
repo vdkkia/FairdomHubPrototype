@@ -1,0 +1,5 @@
+
+
+<%= render :partial => "general/item_title", :locals => {:item => @repository_standard,:buttons_partial => 'buttons'} %>
+<%= item_description h(@repository_standard.description) -%>
+<%= render :partial=>"general/items_related_to",:object => @repository_standard %>

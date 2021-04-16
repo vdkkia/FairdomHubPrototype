@@ -1,0 +1,6 @@
+<% repository_standard = item %>
+ <%= item_actions_dropdown do %>
+    <% if repository_standard.can_delete? %>
+        <%= delete_icon(repository_standard, current_user) %>
+    <% end %>
+<% end %> 

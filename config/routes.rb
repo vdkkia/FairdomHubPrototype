@@ -683,6 +683,23 @@ SEEK::Application.routes.draw do
     end
   end
 
+  resources :single_pages do
+     member do
+        get "/render_sharing_form/:id/type/:type" => "single_pages#render_sharing_form"
+        get "/flowchart/:study_id" => "single_pages#flowchart"
+        get "/sample_table/:assay_id" => "single_pages#sample_table"
+        get "/sample_source/:study_id" => "single_pages#sample_source"
+        get :ontology
+        post :update_flowchart
+
+      end
+  end
+
+  ### TEMPLATES ###
+  resources :repository_standards do
+    resources :projects, only: [:index]
+  end
+
   ### ASSAY AND TECHNOLOGY TYPES ###
 
   get '/assay_types/', to: 'assay_types#show', as: 'assay_types'
