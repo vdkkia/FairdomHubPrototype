@@ -40,29 +40,15 @@ namespace :seek do
             repo.update_column(:policy_id,policy.id)
   
             item["data"].each_with_index do |attribute, j|
-              has_ontology = !attribute["ontology"].blank?
-              obj = { title: attribute["name"], 
-                    short_name: attribute["short_name"],
-                    required: attribute["required"],
-                    description: attribute["description"]}
-  
-              if has_ontology
-                obj = obj.merge(
-                  {  #description: attribute["ontology"]["description"],
-                  source_ontology: attribute["ontology"]["name"],
-                  ols_root_term_uri: attribute["ontology"]["rootTermURI"]}) 
-              else
-                if attribute["CVList"].blank?
-                  # To be bypassed in cv attribute value checker
-                  obj = obj.merge({ source_ontology: "free_text" }) 
-                end
-              end
-  
-              scv = SampleControlledVocab.new(obj)
-  
-              scv.repository_standard = repo
+              is_ontology = !attribute["ontology"].blank?
+              is_CV = !attribute["CVList"].blank?
+              scv = SampleControlledVocab.new({
+                title: attribute["name"],
+                source_ontology: is_ontology ? attribute["ontology"]["name"] : nil,
+                ols_root_term_uri: is_ontology ? attribute["ontology"]["rootTermURI"] : nil
+              }) if is_ontology || is_CV
               
-              if has_ontology
+              if is_ontology
                 if !attribute["ontology"]["rootTermURI"].blank?
                   begin
                     terms = client.all_descendants(attribute["ontology"]["name"], attribute["ontology"]["rootTermURI"])
@@ -78,7 +64,7 @@ namespace :seek do
                     end
                   end
                 end
-              else #the CV terms
+              elsif is_CV #the CV terms
                 if !attribute["CVList"].blank?
                   attribute["CVList"].each do |term|
                     cvt = SampleControlledVocabTerm.new({ label: term })
@@ -87,9 +73,22 @@ namespace :seek do
                 end
               end
   
-              if !scv.save
-                puts scv.errors.inspect
+              if is_ontology || is_CV
+                if !scv.save
+                  puts scv.errors.inspect
+                end
               end
+              
+              TemplateAttribute.create({
+                title: attribute["name"], 
+                short_name: attribute["short_name"],
+                required: attribute["required"],
+                description: attribute["description"],
+                sample_controlled_vocab_id: scv.blank? ? nil : scv.id,
+                repository_standard_id: repo.id,
+                sample_attribute_type_id: is_ontology ? 23 : is_CV ? 18 : 7 #Based on sample_attribute_type table
+              })
+
             end
   
           end

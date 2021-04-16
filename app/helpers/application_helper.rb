@@ -516,10 +516,17 @@ end
  def load_templates
     source_list = []
     RepositoryStandard.all().order(:group, :group_order).each do |item|
-      source_list.push({title: item.title, type: item.level, group: item.group,
+      source_list.push({ title: item.title, type: item.level, group: item.group,
         repoId: item.id, attributes: 
-        item.sample_controlled_vocabs.map do |term|
-          { id: term.source_ontology == "free_text" ? "" : term.id, title: term.title, shortName: term.short_name, des: term.description, required: term.required }
+        item.template_attributes.map do |attribute|
+          { 
+            attribute_type_id: attribute.sample_attribute_type_id,
+            cv_id: attribute.sample_controlled_vocab_id,
+            title: attribute.title,
+            shortName: attribute.short_name,
+            description: attribute.description,
+            required: attribute.required 
+          }
         end
       })
     end
