@@ -62,9 +62,8 @@
         <% if Sample.can_create? %>
             <li><%= link_to(t("sample"), select_sample_types_path) %></li>
         <% end %>
-        <% if SampleType.can_create? %>
-            <li><%= link_to(t("sample_type"), new_sample_type_path) %></li>
-        <% end %>
+
+        <li><%= link_to(t("template"), new_repository_standard_path) %></li>
         <% if Seek::Config.organisms_enabled && can_create_organisms? %>
           <li><%= link_to(t("strain"), new_strain_path) %></li>
           <li><%= link_to t("organism"), new_organism_path %></li>
