@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_04_12_111415) do
+ActiveRecord::Schema.define(version: 2021_04_16_095401) do
 
   create_table "activity_logs", id: :integer,  force: :cascade do |t|
     t.string "action"
@@ -1590,9 +1590,6 @@ ActiveRecord::Schema.define(version: 2021_04_12_111415) do
     t.string "first_letter", limit: 1
     t.string "source_ontology"
     t.string "ols_root_term_uri"
-    t.boolean "required"
-    t.string "short_name"
-    t.integer "repository_standard_id"
   end
 
   create_table "sample_resource_links", id: :integer,  force: :cascade do |t|
@@ -1926,6 +1923,20 @@ ActiveRecord::Schema.define(version: 2021_04_12_111415) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["resource_type", "resource_id"], name: "index_tasks_on_resource_type_and_resource_id"
+  end
+
+  create_table "template_attributes",  force: :cascade do |t|
+    t.string "title"
+    t.string "short_name"
+    t.boolean "required", default: false
+    t.string "ontology_version"
+    t.text "description"
+    t.integer "repository_standard_id"
+    t.integer "sample_controlled_vocab_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "sample_attribute_type_id"
+    t.index ["repository_standard_id", "title"], name: "index_repository_standard_id_asset_id_title"
   end
 
   create_table "text_values", id: :integer,  force: :cascade do |t|

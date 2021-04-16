@@ -514,4 +514,24 @@ class ApplicationFormBuilder < ActionView::Helpers::FormBuilder
   end
 end
 
+ def load_templates
+    source_list = []
+    RepositoryStandard.all().order(:group, :group_order).each do |item|
+      source_list.push({ title: item.title, type: item.level, group: item.group,
+        repoId: item.id, attributes: 
+        item.template_attributes.map do |attribute|
+          { 
+            attribute_type_id: attribute.sample_attribute_type_id,
+            cv_id: attribute.sample_controlled_vocab_id,
+            title: attribute.title,
+            shortName: attribute.short_name,
+            description: attribute.description,
+            required: attribute.required 
+          }
+        end
+      })
+    end
+    source_list
+  end
+
 ActionView::Base.default_form_builder = ApplicationFormBuilder

@@ -1,5 +1,8 @@
 class RepositoryStandard < ApplicationRecord
-  has_many :sample_controlled_vocabs, inverse_of: :repository_standard, dependent: :destroy
+  acts_as_authorized
+  
+  has_many :template_attributes, inverse_of: :repository_standard, dependent: :destroy
+  has_many :sample_types
   validates :title, presence: true
   validates :title, uniqueness: { scope: :group }
 
@@ -10,10 +13,6 @@ class RepositoryStandard < ApplicationRecord
     # return true if user.is_admin?
     contributor == user.person || projects.detect { |project| project.can_manage?(user) }.present?
     contributor && sample_types.empty?
-  end
-
-  def can_view?(user = User.current_user)
-    (user && user.person && (user.person.projects & projects).any?)
   end
 
 end
