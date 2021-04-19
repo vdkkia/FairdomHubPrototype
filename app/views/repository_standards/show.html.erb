@@ -2,4 +2,16 @@
 
 <%= render :partial => "general/item_title", :locals => {:item => @repository_standard,:buttons_partial => 'buttons'} %>
 <%= item_description h(@repository_standard.description) -%>
+
+
+<h2>Attributes</h2>
+
+<ul>
+<%=
+  @repository_standard.template_attributes.collect do |attribute|
+    content_tag(:li){template_attribute_details(attribute)}
+  end.join.html_safe
+%>
+</ul>
+
 <%= render :partial=>"general/items_related_to",:object => @repository_standard %>
