@@ -15,4 +15,8 @@ class RepositoryStandard < ApplicationRecord
     contributor && sample_types.empty?
   end
 
+  def can_view?(user = User.current_user)
+    (user && user.person && (user.person.projects & projects).any?)
+  end
+
 end
