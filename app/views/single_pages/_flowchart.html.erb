@@ -1,4 +1,5 @@
 <%=javascript_include_tag('jquery.flowchart.js')%>
+
 <%= stylesheet_link_tag 'application', 'jquery.flowchart.css' %>
 
 <div id="content-wrapper">
@@ -20,19 +21,25 @@
                     Outputs: <input id="outputs_num" type="number" class="form-control" style="width:50px;font-size:12px" value="1" min="0" max="3" onclick="setOutputNum()">
                 </div>
             </div>
-            <div class="draggable_operators_divs">
-                <span style="color:#888"><i class="glyphicon glyphicon-info-sign"></i> Drag & Drop into
-                    the canvas:</span><br />
-                <div class="draggable_operator ui-draggable ui-draggable-handle wf_btn" data-nb-inputs="1" data-nb-outputs="1" data-shape='rectangle' data-shape_id='na'>Assay</div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="draggable_operators_divs">
+                        <span style="color:#888"><i class="glyphicon glyphicon-info-sign"></i> Drag & Drop into
+                            the canvas:</span><br />
+                        <div class="draggable_operator ui-draggable ui-draggable-handle wf_btn" data-nb-inputs="1" data-nb-outputs="1" data-shape='rectangle' data-assay_id='' data-sample_type_id=''>Assay</div>
+                    </div>
+                </div>
             </div>
+
             <hr>
-            <a class="btn btn-primary" id="btn_save_flowchart" onclick="saveFlowchart()">Update</a>
+            <a class="btn btn-primary" id="btn_save_flowchart" onclick="fl.promptForStreams()">Update</a>
+            <input id="btnTest" type="button" value="test" class="btn btn-primary" onclick="test()" />
+
             <br />
         </div>
     </div>
 
-
-    <div id="assayInfo" class="modal in">
+    <div id="assayInfo" class="modal in" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog modal-m" style="width:800px">
             <div class="modal-content">
                 <div class="modal-header">
@@ -45,7 +52,7 @@
                             <div class="col-md-12">
                                 <label for="sourceSelect" style="width:100%">
                                     Select the source characteristics.
-                                    <select class="assayType form-control" style="width: 100%" id="assayType" onchange="asyTypeChange();">
+                                    <select class="assayType form-control" style="width: 100%" id="assayType" onchange="handleAssayTypeChange();">
                                         <input type="hidden" id="method_type">
                                     </select>
                                 </label>
@@ -93,10 +100,13 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <input id="btnSaveAssay" type="button" value="Save" class="btn btn-primary" data-dismiss="modal" onclick="saveAssay()" />
+                    <input id="btnSaveAssay" type="button" value="Save" class="btn btn-primary" onclick="saveAssay()" />
+                    <input id="close" type="button" data-dismiss="modal" style="display:none" />
                     <input id="btnCancelAssay" type="button" value="Cancel" class="btn btn-default" data-dismiss="modal" onclick="cancelAssay()" />
                 </div>
             </div>
         </div>
     </div>
+
+    <%=  render partial: 'streams' %>
 </div>

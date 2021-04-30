@@ -113,7 +113,7 @@
              pid = <%= @project.id %>
              uid = <%= current_user.id if current_user %>
 
-            init_flowchart()
+            fl.init();
             addAssayTypeOptions()
             populateTemplates()
 

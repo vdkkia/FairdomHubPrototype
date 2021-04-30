@@ -618,26 +618,36 @@ function applyTemplate() {
 }
 
 function createSampleType(data, cb) {
-  let params = {};
-  params.onSuccess = (s) => cb(s);
-  params.onError = (e) => console.log(e);
-  params.data = JSON.stringify(data);
-  ajaxCall("/sample_types/", "POST", params);
+  return new Promise((resolve) => {
+    let params = {};
+    params.onSuccess = (s) => {
+      cb(s);
+      resolve(s);
+    };
+    params.onError = (e) => console.log(e);
+    params.data = JSON.stringify(data);
+    params._return = true;
+    return ajaxCall("/sample_types/", "POST", params);
+  });
 }
 
 function sampleTypeData(attributes, title, assayId = null) {
   // Create the Source Sample Type
   // Add table columns as attribute types
+  let attribute_types = { 7: "Text", 17: "SEEK Sample", 18: "Controlled Vocabulary", 23: "Ontology" };
+  // console.log("attributes", attributes);
   const attributeMap = $j(attributes)
     .map((i, x) => ({
       title: x.title.toLowerCase(),
       sample_attribute_type: {
-        title: x.id ? "Controlled Vocabulary" : "Text",
+        title: attribute_types[x.attribute_type_id],
       },
-      sample_controlled_vocab_id: x.id,
+      sample_controlled_vocab_id: x.cv_id,
+      linked_sample_type_id: x.linked_sample_type_id,
       required: x.required,
       pos: (i + 1).toString(),
       unit_id: null,
+      isa_tag_id: 1, // TODO Set isa_tag
       is_title: i == 0 ? true : false,
     }))
     .get();
@@ -646,14 +656,30 @@ function sampleTypeData(attributes, title, assayId = null) {
 
 function saveDesign() {
   const callBack = (s) => {
-    let data = { flowchart: {} };
-    data.flowchart.study_id = selectedItem.id;
-    data.flowchart.source_sample_type_id = s.data.id;
-    data.flowchart.items = '[{"id": "", "left": 40, "top": 100}]';
+    console.log(s);
+    let data = { flowchart: { study_id: selectedItem.id, source_sample_type_id: s.data.id } };
+    data.flowchart.items = JSON.stringify({
+      links: {},
+      operatorTypes: {},
+      operators: {
+        0: {
+          left: 40,
+          top: 100,
+          properties: {
+            inputs: {},
+            outputs: { output_0: { label: "Output 1", multiple: true } },
+            shape: "parallelogram",
+            assay_id: "",
+            sample_type_id: s.data.id,
+            title: "Source Sample",
+          },
+        },
+      },
+    }); //'[{"id": "", "left": 40, "top": 100}]';
 
     let params = {};
-    params.onSuccess = (s) => loadFlowchart();
-    params.onError = () => hideFlowchart();
+    params.onSuccess = () => fl.load();
+    params.onError = () => fl.hide();
     params.data = JSON.stringify(data);
     ajaxCall(`/single_pages/${pid}/update_flowchart`, "POST", params);
   };

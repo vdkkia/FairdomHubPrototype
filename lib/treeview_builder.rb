@@ -6,18 +6,27 @@
         end
     
         def build_tree_data
-            inv, std, prj, asy = Array.new(4) { [] }
+            inv, std, prj, asy, str = Array.new(5) { [] }
             bold = { 'style': 'font-weight:bold' }
             @project.investigations.each do |investigation|
                 investigation.studies.each do |study|
-                    next unless study.assays
-                    study.assays.each_with_index do |assay, i|
-                        asy.push(create_node({text: assay.title, _type: 'assay', _id: assay.id,
-                             a_attr: bold, label: i.zero? ? 'Assay' : nil}))
+                    if (study.flowchart)
+                        study.flowchart.streams.each_with_index do |stream, i|
+                            stream.stream_items.order(:position).each_with_index do |item, j|
+                                if(j > 0) # Skip source
+                                    assay = item.sample_type.assays.first
+                                    asy.push(create_node({text: assay.title, _type: 'assay', _id: assay.id,
+                                        a_attr: bold }))# label: j==1 ? 'Assays' : nil}))
+                                end
+                            end
+                            str.push(create_node({text: stream.title, _type: 'stream', _id: stream.id,
+                                a_attr: bold, label: i.zero? ? 'Streams' : nil, children: asy}))
+                            asy = []
+                        end
                     end
                     std.push(create_node({text: study.title, _type: 'study', _id: study.id,
-                         a_attr: bold, children: asy}))
-                    asy = []
+                        a_attr: bold, children: str}))
+                    str = []
                 end
                 inv.push(create_node({text: investigation.title, _type: 'investigation',
                      _id: investigation.id, a_attr: bold, label: 'Studies', action: '#', children: std}))

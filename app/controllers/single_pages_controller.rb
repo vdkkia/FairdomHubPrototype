@@ -60,24 +60,24 @@ class SinglePagesController < ApplicationController
   def flowchart
     begin
       flowchart = Flowchart.where(study_id: params[:study_id]).first
-      study = Study.where(id: params[:study_id]).first
-      assay_ids = study.assays.select { |a| a.sops.length > 0 } .collect{|a| a.id.to_s}
-      if flowchart.nil?
-        return render json: {error:"no flowchart" }, status: :unprocessable_entity
-      else
-        #Filters items that don't exist anymore
-        items = JSON.parse(flowchart.items).map{|n| n if assay_ids.include?(n["id"]) || n["id"].blank?}.compact
+      study = Study.find(params[:study_id])
+      assay_ids = study.assays.select { |a| a.sops.length > 0 } .collect{|a| a.id.to_s}     
+      return render json: {}, status: :ok if flowchart.nil?
+      #Filters items that don't exist anymore
+      fl = JSON.parse(flowchart.items)
+      fl["operators"].keys.each do |key|
+        id = fl["operators"][key]["properties"]["assay_id"]
+       if !(assay_ids.include?(id) || id.empty?)
+        # TODO If a box is removed, the links should connect to the next box
+        condition = fl["links"][lkey]["toOperator"].to_s == key || fl["links"][lkey]["fromOperator"].to_s == key 
+        fl["links"].keys.each { |lkey|  fl["links"].delete(lkey) if condition }
+        fl["operators"].delete(key) 
+        break
+       end
       end
-      operators = items.map {|item| create_operator(item,study)}
-      links = items.drop(1).map.with_index {|item, i| create_link(i)}
-      flowchart_data = {operators: operators, links: links, operatorTypes:{}}
+      render json: { status: :ok, data: fl }
     rescue Exception => e
-      error = e.message
-    end
-    if error
-      render json: {status: :unprocessable_entity, error: error  }
-    else
-      render json: {status: :ok, data: flowchart_data }
+      render json: { status: :ok, data: e.message }
     end
   end
 
@@ -87,6 +87,16 @@ class SinglePagesController < ApplicationController
     f = Flowchart.find_or_create_by(study_id: params[:flowchart][:study_id]) do |u|
       is_new = true
     end
+    streams = params[:flowchart][:streams]
+    if (!streams.blank?)
+      streams.each do |s|
+        stream = Stream.find_or_create_by(flowchart_id: f.id, title: s[:title])
+        stream.title = s[:title]
+        stream.stream_items = s[:items].each_with_index.map {|m,i| StreamItem.new(sample_type_id: m[:sample_type_id], position: i)}
+        stream.save
+      end
+    end
+
     if f.update_attributes(flowchart_params)
       render json: { data: f, is_new: is_new }, status: :ok
     else
@@ -141,20 +151,6 @@ class SinglePagesController < ApplicationController
         .select { |k, v| !v.nil? }
   end
 
-
-  def create_operator (item, study)
-    id = item["id"]
-    { properties: {title: id.blank? ? "Source Sample" : study.assays.find(id).sops.first.title,
-      inputs: id.blank? ? {} : {input_0: {label: "in"}}, outputs: {output_0: {label: "out"}}, 
-      shape: id.blank? ? "parallelogram" : "rectangle", 
-      shape_id: id || "init"}, left: item["left"], top: item["top"]}
-  end
-
-  def create_link index
-    {fromOperator:index, fromConnector:"output_0",
-      fromSubConnector: "0",toOperator: index + 1, toConnector:"input_0",toSubConnector: "0"}
-  end
-
   def template_sample_types
     admin_ids = @project.project_administrators.pluck(:id)
     sample_types = SampleType.where(:contributor_id => admin_ids)
@@ -171,7 +167,7 @@ class SinglePagesController < ApplicationController
     # No assay is associated with the source
     header = source.sample_attributes.select(:required, :title, :sample_type_id, :id, :sample_controlled_vocab_id)
     Study.find(assay.study.id).assays.where("position <= #{assay.position}").order(:position).each do |a|
-      header += a.sample_type.sample_attributes.select(:required, :title, :sample_type_id, :id, :sample_controlled_vocab_id)
+      header += a.sample_type&.sample_attributes&.select(:required, :title, :sample_type_id, :id, :sample_controlled_vocab_id)
     end
     header
   end
@@ -183,7 +179,7 @@ class SinglePagesController < ApplicationController
     # No assay is associated with the source
     samples_collection[0] = source.samples.select(:id, :json_metadata, :sample_type_id, :link_id)
     Study.find(assay.study.id).assays.where("position <= #{assay.position}").order(:position).each_with_index do |a, i|
-      samples_collection[i + 1] = a.sample_type.samples.select(:id, :json_metadata, :sample_type_id, :link_id)
+      samples_collection[i + 1] = a.sample_type&.samples&.select(:id, :json_metadata, :sample_type_id, :link_id)
     end
     samples_collection
   end

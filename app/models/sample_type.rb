@@ -35,6 +35,7 @@ class SampleType < ApplicationRecord
   belongs_to :repository_standard
 
   has_many :assays
+  has_one :stream_item
 
   validates :title, presence: true
   validates :title, length: { maximum: 255 }

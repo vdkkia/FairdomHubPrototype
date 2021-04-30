@@ -653,7 +653,7 @@ $j(function () {
         operator: $joperator,
         title: $joperator_title,
         connectorSets: connectorSets,
-        operator_id: operatorData.properties.shape_id,
+        operator_id: operatorData.properties.assay_id,
         connectors: connectors,
         connectorArrows: connectorArrows,
         connectorSmallArrows: connectorSmallArrows,

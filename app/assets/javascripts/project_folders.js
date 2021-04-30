@@ -158,7 +158,7 @@ function item_clicked(type, id, parent) {
     }
   }
   if (type == "study") {
-    loadFlowchart();
+    fl.load();
     loadDesign();
 
   } else if (type == "assay") load_samples(".sampleTable");
