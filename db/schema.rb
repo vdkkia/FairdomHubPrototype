@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_04_27_163805) do
+ActiveRecord::Schema.define(version: 2021_05_05_090005) do
 
   create_table "activity_logs", id: :integer,  force: :cascade do |t|
     t.string "action"
@@ -676,7 +676,6 @@ ActiveRecord::Schema.define(version: 2021_04_27_163805) do
   create_table "flowcharts",  force: :cascade do |t|
     t.bigint "study_id", null: false
     t.integer "source_sample_type_id"
-    t.string "assay_sample_type"
     t.text "items"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
