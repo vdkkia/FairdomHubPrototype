@@ -54,6 +54,7 @@
       <% if Seek::Config.organisms_enabled %>
           <li><%= link_to t("organism").pluralize, organisms_path %></li>
       <% end %>
+      <li><%= link_to(t("sample").pluralize, template_reports_path) %></li>
     <% end %>
 
     <% if Seek::Config.human_diseases_enabled %>

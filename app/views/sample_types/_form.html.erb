@@ -184,24 +184,21 @@
             const newRow = `<td><input class='template-input' ${attr.required?'disabled checked':''} type='checkbox'/></td>`
             const title = attr.required ? "<strong>" + attr.title + "*" + "</strong>" : attr.title;
             $j("#sourceAttribs tbody").append(
-                `<tr val='${attr.title}' cv_id=${attr.id}>${newRow}<td>${title}</td>
-          <td>${attr.des}</td>${attr.required?'<td></td>':removeBtn}</tr>`
+                `<tr val='${attr.title}' attribute_type_id=${attr.attribute_type_id} cv_id=${attr.cv_id}>${newRow}<td>${title}</td>
+          <td>${attr.description}</td>${attr.required?'<td></td>':removeBtn}</tr>`
             );
         });
     }
-
-    $j('#new_sample_type').submit(function() {
+    $j('#new_repository_standard').submit(function() {
         if ($j("#from-existing-templates").hasClass('active')) {
-            const baseElement = '<input hidden type="text" name="sample_type[sample_attributes_attributes][%][##]"/>'
+            const baseElement = '<input hidden type="text" name="repository_standard[template_attributes_attributes][%][##]"/>'
             const createElement = (i, name) => $j(baseElement.replace('%', i).replace('##', name))
             $j('#sourceAttribs tbody tr').each((i, tr) => {
                 const cv_id = $j(tr).attr("cv_id")
-                $j(this).append(createElement(i, "pos").val(i));
                 $j(this).append(createElement(i, "title").val($j(tr).attr("val")));
                 $j(this).append(createElement(i, "required").val($j(tr).find("td:first-child input").is(":checked")));
-                $j(this).append(createElement(i, "is_title").val(i == 0));
-                $j(this).append(createElement(i, "sample_attribute_type_id").val(cv_id ? 18 : 7));
-                $j(this).append(createElement(i, "sample_controlled_vocab_id").val(cv_id));
+                $j(this).append(createElement(i, "sample_attribute_type_id").val($j(tr).attr("attribute_type_id")));
+                $j(this).append(createElement(i, "sample_controlled_vocab_id").val(cv_id === "null" ? null : cv_id));
             })
         }
         return true;
@@ -222,5 +219,6 @@
     }
 
     const templates = <%= load_templates().to_json.html_safe %>
+    console.log(templates)
 
 </script>

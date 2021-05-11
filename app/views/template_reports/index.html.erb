@@ -1,0 +1,46 @@
+<%= index_title -%>
+
+<%= folding_panel("Query samples associated with templates", false, :help_text => "Here you can query list of samples which are associated with templates.") do %>
+<div class="row">
+    <div class="col-md-8">
+
+        <%= form_with url: query_samples_path, method: :post do |f| %>
+        <div>Select templates you want to see their samples</div>
+        <select name="template_ids[]" id="template-multi-select" multiple="multiple">
+            <% @templates.each do |template| %>
+            <option value=<%=template.id%>>
+                <%=template.title%>
+                <% end %>
+        </select>
+        </br> </br>
+        <%= f.submit "Submit query", {:id=> 'templates-query' , :class => 'btn btn-primary', :disabled => true} %>
+        <% end %>
+    </div>
+</div>
+<% end %>
+
+<div id="template-samples-table">
+    <%= render partial: "template_reports/table_view", locals: { samples: @template_samples, link: true } if @template_samples %>
+</div>
+
+<script>
+    $j(document).ready(function() {
+        //  Samples.initTable($j('#samples-table'));
+        const templatesCount = <%= @templates.length %>
+        let templateCount = 0
+        $j("#template-multi-select", this.el).multiselect({
+            includeSelectAllOption: true,
+            enableFiltering: true,
+            includeFilterClearBtn: false,
+            nonSelectedText: 'No template selected',
+            buttonWidth: 300,
+            maxHeight: 300,
+            onChange: function(option, checked) {
+                if (!option && checked) templateCount = templatesCount
+                else if (!option && !checked) templateCount = 0
+                else templateCount += checked ? 1 : -1;
+                $j("#templates-query").attr("disabled", templateCount === 0);
+            }
+        });
+    });
+</script>

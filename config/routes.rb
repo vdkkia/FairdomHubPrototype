@@ -711,6 +711,10 @@ SEEK::Application.routes.draw do
     resources :projects, only: [:index]
   end
 
+  ### TEMPLATE REPORTS ###
+  resources :template_reports do
+  end
+
   ### ASSAY AND TECHNOLOGY TYPES ###
 
   get '/assay_types/', to: 'assay_types#show', as: 'assay_types'
@@ -771,4 +775,7 @@ SEEK::Application.routes.draw do
   get '/citation/(*doi)' => 'citations#fetch', as: :citation, constraints: { doi: /.+/ }
 
   get '/home/isa_colours' => 'homes#isa_colours'
+
+  ## TEMPLATE REPORTS ###
+  post "/template_reports/query_samples" => 'template_reports#query_samples', as: :query_samples
 end
