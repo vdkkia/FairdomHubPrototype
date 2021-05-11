@@ -319,7 +319,7 @@ const fl = {
     };
 
     let params = {};
-    // params.onSuccess = (s) => location.reload(true);
+    params.onSuccess = (s) => location.reload();
     params.onError = (e) => console.error("error updating Flowchart!");
     params.data = JSON.stringify(data);
     params.dataType = "json";
