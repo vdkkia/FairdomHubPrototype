@@ -66,14 +66,13 @@ class SinglePagesControllerTest < ActionController::TestCase
   end
 
 
-  test 'should return error when no flowchart' do
+  test 'should return empty object when no flowchart' do
     project = Factory(:project)
     study = Factory(:study)
     get :flowchart, params: { id: project.id, study_id: study.id }
-    assert_response :unprocessable_entity
+    assert_response :ok
     body = JSON.parse(response.body)
-    assert body.include?('error')
-    assert_equal body['error'], 'no flowchart'
+    assert_equal body, {}
   end
 
   test 'should return flowchart' do
@@ -98,8 +97,8 @@ class SinglePagesControllerTest < ActionController::TestCase
     assert_equal source_type[:title], 'Plant-ArrayExpress'
     assert_equal source_type[:type], "study"
     assert_equal source_type[:attributes].kind_of?(Array), true
-    assert_equal source_type[:attributes][0][:title], 'Organism'
-    assert_equal source_type[:attributes][0][:required], true
+    assert_equal source_type[:attributes][0][:title], 'protocol type'
+    assert_equal source_type[:attributes][0][:required], false
   end
 
   test 'should return sample table' do
@@ -114,11 +113,18 @@ class SinglePagesControllerTest < ActionController::TestCase
 
   test 'should load samples' do
     setup_entities
-    samples = @controller.send :load_samples, @assay1, @st0 
-    assert_equal true, samples[0][0].kind_of?(Hash)
-    assert_equal true, samples[1][0].kind_of?(Hash)
-    assert_equal JSON.parse(samples[0][0]["data"])["link_id"],  JSON.parse(samples[1][0]["data"])["link_id"]
-
+    sample_collections = @controller.send :load_samples, @assay1, @st0 
+    link_ids = []
+    sample_collections.each do |key, collection|
+      collection.each_with_index do |sample, i|
+        if key == 0 
+          link_ids.push(sample[:link_id])
+        else
+          assert_equal sample[:link_id], link_ids[i]
+        end
+        assert_equal true, sample.kind_of?(Sample)
+      end
+    end
   end
 
   test 'should load Ontologies' do
@@ -136,15 +142,19 @@ class SinglePagesControllerTest < ActionController::TestCase
   private
 
   def populate_source_types
-    r = RepositoryStandard.new(title: "Plant-ArrayExpress", group_tag: "plant", repo_type: "study")
-    v = r.sample_controlled_vocabs.new(title: "Organism", short_name:"Org", description:"description", required:"true")
+    project = Factory(:project)
+    r = RepositoryStandard.new(title: "Plant-ArrayExpress", group: "arrayexpress", level: "study", projects:[project])
+    attribute = TemplateAttribute.new({title: "protocol type", required: "false"})
+    v = SampleControlledVocab.new(title: "Organism", description:"description")
+    
     v.sample_controlled_vocab_terms.new(label: "synthetic construct")
     v.sample_controlled_vocab_terms.new(label: "freshwater sediment metagenome")
     v.sample_controlled_vocab_terms.new(label: "Haloferax volcanii")
     v.sample_controlled_vocab_terms.new(label: "Halobacterium salinarum")
+    v.save!
 
-    r.sample_controlled_vocabs.new(title: "Organism part", short_name:"Org_part", description:"description", required:"false")
-    r.sample_controlled_vocabs.new(title: "Developmental stage", short_name:"dev_stg", description:"description", required:"true")
+    attribute.sample_controlled_vocab_id = v.id
+    r.template_attributes << attribute
     r.save!
     return v.id
   end
@@ -157,19 +167,19 @@ class SinglePagesControllerTest < ActionController::TestCase
     @st0 = SampleType.new title: 'st0', project_ids: [@project.id] , contributor: person
     @st0.sample_attributes << Factory(:sample_attribute, title: 'some_field', is_title: true, required: true, sample_attribute_type: Factory(:string_sample_attribute_type), sample_type: @st0)
     @st0.sample_attributes << Factory(:sample_attribute, title: 'another_field', sample_attribute_type: Factory(:string_sample_attribute_type), required: false, sample_type: @st0)
-    @st0.sample_attributes << Factory(:sample_attribute, title: 'link_id', sample_attribute_type: Factory(:string_sample_attribute_type), required: true, sample_type: @st0)
+    # @st0.sample_attributes << Factory(:sample_attribute, title: 'link_id', sample_attribute_type: Factory(:string_sample_attribute_type), required: true, sample_type: @st0)
     @st0.save!
 
     @st1 = SampleType.new title: 'st1', project_ids: [@project.id] , contributor: person
     @st1.sample_attributes << Factory(:sample_attribute, title: 'organism', is_title: true, required: true, sample_attribute_type: Factory(:string_sample_attribute_type), sample_type: @st1)
     @st1.sample_attributes << Factory(:sample_attribute, title: 'organism part', sample_attribute_type: Factory(:string_sample_attribute_type), required: false, sample_type: @st1)
-    @st1.sample_attributes << Factory(:sample_attribute, title: 'link_id', sample_attribute_type: Factory(:string_sample_attribute_type), required: true, sample_type: @st1)
+    # @st1.sample_attributes << Factory(:sample_attribute, title: 'link_id', sample_attribute_type: Factory(:string_sample_attribute_type), required: true, sample_type: @st1)
     @st1.save!
 
     st2 = SampleType.new title: 'st2', project_ids: [@project.id] , contributor: person
     st2.sample_attributes << Factory(:sample_attribute, title: 'organism', is_title: true, required: true, sample_attribute_type: Factory(:string_sample_attribute_type), sample_type: st2)
     st2.sample_attributes << Factory(:sample_attribute, title: 'organism part', sample_attribute_type: Factory(:string_sample_attribute_type), required: false, sample_type: st2)
-    st2.sample_attributes << Factory(:sample_attribute, title: 'link_id', sample_attribute_type: Factory(:string_sample_attribute_type), required: true, sample_type: st2)
+    # st2.sample_attributes << Factory(:sample_attribute, title: 'link_id', sample_attribute_type: Factory(:string_sample_attribute_type), required: true, sample_type: st2)
     st2.save!
 
     @assay1 = Factory(:min_assay, contributor: person, policy: Factory(:public_policy))
@@ -188,12 +198,12 @@ class SinglePagesControllerTest < ActionController::TestCase
     @assay3.study = study
     @assay3.save!
 
-    sample0 = Sample.new(sample_type: @st0, contributor: person, project_ids: [@project.id])
-    sample0.update_attributes(data: { some_field: 'some_field 0', another_field: 'another_field 0', link_id: '7c0dm3d' })
-    sample1 = Sample.new(sample_type: @st1, contributor: person, project_ids: [@project.id])
-    sample1.update_attributes(data: { organism: 'organism 1', "organism part": 'organism part 1', link_id: '7c0dm3d' })
-    sample2 = Sample.new(sample_type: st2, contributor: person, project_ids: [@project.id])
-    sample2.update_attributes(data: { organism: 'organism 2', "organism part": 'organism part 2', link_id: '7c0dm3d' })
+    sample0 = Sample.new(sample_type: @st0, contributor: person, project_ids: [@project.id], link_id: '7c0dm3d')
+    sample0.update_attributes(data: { some_field: 'some_field 0', another_field: 'another_field 0' })
+    sample1 = Sample.new(sample_type: @st1, contributor: person, project_ids: [@project.id], link_id: '7c0dm3d')
+    sample1.update_attributes(data: { organism: 'organism 1', "organism part": 'organism part 1' })
+    sample2 = Sample.new(sample_type: st2, contributor: person, project_ids: [@project.id], link_id: '7c0dm3d')
+    sample2.update_attributes(data: { organism: 'organism 2', "organism part": 'organism part 2' })
   end
 
 end

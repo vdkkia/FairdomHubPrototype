@@ -62,4 +62,40 @@ class TreeviewBuilderTest < ActionController::TestCase
     result = controller.send(:build_tree_data)
     assert_instance_of Array, JSON.parse(result)
   end
+
+  test "return tree data of minimal project" do
+    project = Factory(:project)
+    folders = Factory :project_folder, project_id: project.id
+    investigation = Factory(:investigation, projects: [project])
+    study = Factory(:study, investigation: investigation)
+    source_sample_type = Factory(:min_sample_type)
+    
+    assay1 = Factory(:assay, title: "assay1", study: study)
+    sample_type_1 = Factory(:min_sample_type, assays: [assay1])
+    assay2 = Factory(:assay, title: "assay2", study: study)
+    sample_type_2 = Factory(:min_sample_type, assays: [assay2])
+
+    flowchart = Flowchart.create({study_id: study.id, source_sample_type_id: source_sample_type})
+    stream = Stream.create({title: "test stream", flowchart_id: flowchart.id})
+    stream_item_1 = StreamItem.create({stream_id: stream.id, sample_type_id: source_sample_type.id})
+    stream_item_2 = StreamItem.create({stream_id: stream.id, sample_type_id: sample_type_1.id})
+    stream_item_3 = StreamItem.create({stream_id: stream.id, sample_type_id: sample_type_2.id})
+
+    controller = TreeviewBuilder.new project, folders
+    result = JSON.parse controller.send(:build_tree_data)
+
+    tree_investigation = result[0]["children"]
+    assert_equal tree_investigation.length, 1
+
+    tree_study = tree_investigation[0]["children"]
+    assert_equal tree_study.length, 1
+
+    tree_stream = tree_study[0]["children"][0]
+    assert_equal tree_stream["text"], "test stream"
+    assert_equal tree_stream["children"].length, 2
+    assert_equal tree_stream["children"][0]["text"], "assay1"
+    assert_equal tree_stream["children"][1]["text"], "assay2"
+
+  end
+
 end
