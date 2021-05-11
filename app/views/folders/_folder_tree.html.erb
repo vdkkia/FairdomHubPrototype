@@ -1,5 +1,5 @@
 
-<div id="demo_tree" class="new-design"></div>
+<div id="folder-tree" class="new-design"></div>
 <hr/>
 <hr/>
 <div id="project_folders"></div>
@@ -9,7 +9,7 @@
 
 <script type="text/javascript">
   $j(document).ready(function () {
-    setupFoldersTree(<%= ((TreeviewBuilder.new(@project,@folders)).build_tree_data).html_safe -%>,'demo_tree','draggable_folder_item');
+    setupFoldersTree(<%= ((TreeviewBuilder.new(@project,@folders)).build_tree_data).html_safe -%>,'folder-tree','draggable_folder_item');
     setupFoldersTree(<%= folder_tree_json(@folders).html_safe -%>,'project_folders','draggable_folder_item');
     setupFoldersTree(<%= folder_tree_json(Seek::AssayFolder.assay_folders(@project)).html_safe -%>,'assay_folders','exp_assay_accepted_item');
   });
