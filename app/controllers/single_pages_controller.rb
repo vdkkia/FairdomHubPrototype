@@ -69,8 +69,10 @@ class SinglePagesController < ApplicationController
         id = fl["operators"][key]["properties"]["assay_id"]
        if !(assay_ids.include?(id) || id.empty?)
         # TODO If a box is removed, the links should connect to the next box
-        condition = fl["links"][lkey]["toOperator"].to_s == key || fl["links"][lkey]["fromOperator"].to_s == key 
-        fl["links"].keys.each { |lkey|  fl["links"].delete(lkey) if condition }
+        fl["links"].keys.each do |lkey|
+          condition = fl["links"][lkey]["toOperator"].to_s == key || fl["links"][lkey]["fromOperator"].to_s == key 
+          fl["links"].delete(lkey) if condition
+        end
         fl["operators"].delete(key) 
         break
        end
