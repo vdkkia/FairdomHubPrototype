@@ -4,8 +4,8 @@ class SampleTypeSerializer < BaseSerializer
 
   attribute :repository_standard do
     if(object.repository_standard_id)
-      repo = RepositoryStandard.select(:id, :group, :name).find(object.repository_standard_id)
-      "#{repo.group}/#{repo.name}"
+      repo = RepositoryStandard.select(:id, :group, :title).find(object.repository_standard_id)
+      "#{repo.group}/#{repo.title}"
     end
   end
 
