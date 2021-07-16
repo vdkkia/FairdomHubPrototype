@@ -4,10 +4,7 @@ class Study < ApplicationRecord
   include Seek::ProjectHierarchies::ItemsProjectsExtension if Seek::Config.project_hierarchy_enabled
 
   searchable(:auto_index => false) do
-    text :experimentalists
-    text :person_responsible do
-      person_responsible.try(:name)
-    end
+    text :experimentalists    
   end if Seek::Config.solr_enabled
 
   belongs_to :investigation
@@ -20,9 +17,7 @@ class Study < ApplicationRecord
 
   has_many :assays
   has_many :assay_publications, through: :assays, source: :publications
-  has_one :external_asset, as: :seek_entity, dependent: :destroy
-
-  belongs_to :person_responsible, :class_name => "Person"
+  has_one :external_asset, as: :seek_entity, dependent: :destroy  
 
   has_one :flowchart, :dependent => :destroy
 
@@ -42,10 +37,10 @@ class Study < ApplicationRecord
   
   # Returns the columns to be shown on the table view for the resource
   def columns_default
-    super
+    super + ['creators','projects']
   end
   def columns_allowed
-    super + ['experimentalists','other_creators','deleted_contributor']
+    columns_default + ['other_creators']
   end
 
   def state_allows_delete? *args
@@ -69,13 +64,7 @@ class Study < ApplicationRecord
 
   def related_publication_ids
     publication_ids | assay_publication_ids
-  end
-
-  def related_person_ids
-    ids = super
-    ids << person_responsible_id if person_responsible_id
-    ids.uniq
-  end
+  end  
 
   def self.user_creatable?
     Seek::Config.studies_enabled
