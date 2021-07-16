@@ -358,7 +358,8 @@ const fl = {
     $j("#source_table_panel").removeClass("disabled");
 
     const $flowchart = $j("#chart_canvas");
-    const { id, type } = selectedItem;
+    const type = selectedItem.type;
+    const id = selectedItem.id;
     if (type != "study") {
       console.error("Selected item is not a study");
       return;
