@@ -32,9 +32,9 @@ function saveAssay() {
       type: $j("#method_type").val() || 0,
       file: $j("#modalMethodfile")[0].files[0],
       title: $j("#modalMethodTitle").val(),
-      description: $j("#modalMethodDes").val(),
+      description: $j("#modalMethodDes").val()
     },
-    sampleTypeAttrId: $j("#assayType").find(":selected").val(),
+    sampleTypeAttrId: $j("#assayType").find(":selected").val()
   });
   //Add the method detail:
   $j("#chart_canvas").flowchart("setOperatorTitle", Id, $j("#modalMethodTitle").val());
@@ -139,7 +139,7 @@ const seekSampleAttribute = (linked_sample_type_id) => ({
   attribute_type_id: 17,
   required: true,
   title: "sample_connect",
-  linked_sample_type_id,
+  linked_sample_type_id
 });
 
 const arrEqualItems = (arr1, arr2) => {
@@ -185,7 +185,7 @@ const fl = {
           console.log("connected to source!");
         }
         return true;
-      },
+      }
     });
 
     $operatorTitle.keyup(() => {
@@ -210,18 +210,18 @@ const fl = {
           outputs: {},
           shape: $element.data("shape"),
           assay_id: $element.data("assay_id"),
-          sample_type_id: $element.data("sample_type_id"),
-        },
+          sample_type_id: $element.data("sample_type_id")
+        }
       };
       for (let i = 0; i < nbInputs; i++) {
         data.properties.inputs["input_" + i] = {
-          label: "Input " + (i + 1),
+          label: "Input " + (i + 1)
         };
       }
       for (let i = 0; i < nbOutputs; i++) {
         data.properties.outputs["output_" + i] = {
           label: "Output " + (i + 1),
-          multiple: true,
+          multiple: true
         };
       }
       return data;
@@ -261,7 +261,7 @@ const fl = {
           $j("#operator_properties").hide();
           $j("#assayTitle").val(AssayTypes[$j("#assayType").find(":selected").val()].title);
         }
-      },
+      }
     });
     console.log("Flowchart was initialized.");
   },
@@ -314,8 +314,8 @@ const fl = {
       flowchart: {
         study_id: selectedItem.id,
         items: JSON.stringify(fl.getData()),
-        streams: fl.provideStreamData(),
-      },
+        streams: fl.provideStreamData()
+      }
     };
 
     let params = {};
@@ -375,7 +375,7 @@ const fl = {
         if (op.properties.assay_id != "")
           return {
             id: op.properties.assay_id,
-            sopTitle: op.properties.title,
+            sopTitle: op.properties.title
           };
       });
       console.log("Existing Assays:", existingAssays);
@@ -391,7 +391,7 @@ const fl = {
     fl.initStreams();
     $j("#streams").modal("show");
   },
-  save: function ()      {
+  save: function () {
     // $j(event.target).attr("disabled", true);
     console.log("save");
     let newAssays = fl.extractAssays(fl.getData());
@@ -402,29 +402,56 @@ const fl = {
       return;
     }
 
-    asyncForEach(newAssays, async (i, assay) => {
+    for (const [i, assay] of newAssays.entries()) {
       const tempArr = $j.map(existingAssays, (a) => a.id);
       if ($j.inArray(assay.id, tempArr) == -1) {
         const { title, description, method, sampleTypeAttrId } = getAssayDetail(assay.opId);
-        const res1 = await createSOP(method.title, method.description, pid, uid, method.file);
-        const res2 = await createAssay(pid, selectedItem.id, uid, title, description, res1.data.id, i);
-        fl.updateOperator("assay_id", method.title, res2.data.id);
-        // Add seek_sample attribute type
-        const attributes = AssayTypes[sampleTypeAttrId].attributes;
-        // Passing the previous box sample_type_id
-        const linked_sample_type_id = fl.getParentSampleTypeId(method.title);
-        const data = sampleTypeData(
-          [...attributes, seekSampleAttribute(linked_sample_type_id)],
-          `sample_type_${res2.data.id}`,
-          res2.data.id
-        );
-        const res3 = await createSampleType(data, () => {});
-        fl.updateOperator("sample_type_id", method.title, res3.data.id);
-        if (i == newAssays.length - 1) {
-          fl.update();
-        }
+        createSOP(method.title, method.description, pid, uid, method.file).then((res1) => {
+          createAssay(pid, selectedItem.id, uid, title, description, res1.data.id, i).then((res2) => {
+            fl.updateOperator("assay_id", method.title, res2.data.id);
+            // Add seek_sample attribute type
+            const attributes = AssayTypes[sampleTypeAttrId].attributes;
+            // Passing the previous box sample_type_id
+            const linked_sample_type_id = fl.getParentSampleTypeId(method.title);
+            const data = sampleTypeData(
+              [...attributes, seekSampleAttribute(linked_sample_type_id)],
+              `sample_type_${res2.data.id}`,
+              res2.data.id
+            );
+            createSampleType(data, () => {}).then((res3) => {
+              fl.updateOperator("sample_type_id", method.title, res3.data.id);
+              if (i == newAssays.length - 1) {
+                fl.update();
+              }
+            });
+          });
+        });
       }
-    });
+    }
+
+    // asyncForEach(newAssays, async (i, assay) => {
+    //   const tempArr = $j.map(existingAssays, (a) => a.id);
+    //   if ($j.inArray(assay.id, tempArr) == -1) {
+    //     const { title, description, method, sampleTypeAttrId } = getAssayDetail(assay.opId);
+    //     const res1 = await createSOP(method.title, method.description, pid, uid, method.file);
+    //     const res2 = await createAssay(pid, selectedItem.id, uid, title, description, res1.data.id, i);
+    //     fl.updateOperator("assay_id", method.title, res2.data.id);
+    //     // Add seek_sample attribute type
+    //     const attributes = AssayTypes[sampleTypeAttrId].attributes;
+    //     // Passing the previous box sample_type_id
+    //     const linked_sample_type_id = fl.getParentSampleTypeId(method.title);
+    //     const data = sampleTypeData(
+    //       [...attributes, seekSampleAttribute(linked_sample_type_id)],
+    //       `sample_type_${res2.data.id}`,
+    //       res2.data.id
+    //     );
+    //     const res3 = await createSampleType(data, () => {});
+    //     fl.updateOperator("sample_type_id", method.title, res3.data.id);
+    //     if (i == newAssays.length - 1) {
+    //       fl.update();
+    //     }
+    //   }
+    // });
   },
   refresh: function () {
     setTimeout(() => {
@@ -456,19 +483,19 @@ const fl = {
     return _streams;
   },
   getOrderedOps: function () {
-    return streams.reduce((t, i) => [...t, ...$j.grep(i, (x) => !t.includes(x))])
+    return streams.reduce((t, i) => [...t, ...$j.grep(i, (x) => !t.includes(x))]);
   },
   extractAssays: function () {
     const operators = fl.getOperators();
     console.log("operators", operators);
     // Remove source operator
-    const ordered = fl.getOrderedOps()
+    const ordered = fl.getOrderedOps();
     console.log("ordered", ordered);
     let operatorsIds = ordered.slice(1);
     console.log("operatorsIds", operatorsIds);
     return $j.map(operatorsIds, (id, i) => ({
       id: operators[id].properties.assay_id,
-      opId: id, // for using to identify Assay name associated with the method
+      opId: id // for using to identify Assay name associated with the method
     }));
   },
   initStreams: function () {
@@ -500,15 +527,15 @@ const fl = {
       return {
         title,
         items: $j.map(ids, (id) => ({
-          sample_type_id: operators[id].properties.sample_type_id,
-        })),
+          sample_type_id: operators[id].properties.sample_type_id
+        }))
       };
     });
-  },
-};
-
-const asyncForEach = async (array, callback) => {
-  for (let index = 0; index < array.length; index++) {
-    await callback(index, array[index], array);
   }
 };
+
+// const asyncForEach = async (array, callback) => {
+//   for (let index = 0; index < array.length; index++) {
+//     await callback(index, array[index], array);
+//   }
+// };
