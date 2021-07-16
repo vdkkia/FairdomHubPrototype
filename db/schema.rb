@@ -182,8 +182,8 @@ ActiveRecord::Schema.define(version: 2021_05_05_090005) do
     t.integer "suggested_technology_type_id"
     t.text "other_creators"
     t.string "deleted_contributor"
-    t.integer "position"
     t.integer "sample_type_id"
+    t.integer "position"
     t.index ["sample_type_id"], name: "index_assays_on_sample_type_id"
   end
 
@@ -1510,7 +1510,7 @@ ActiveRecord::Schema.define(version: 2021_05_05_090005) do
     t.boolean "can_edit", default: false
     t.boolean "can_download", default: false
     t.boolean "can_delete", default: false
-    t.index ["user_id", "asset_id", "can_view"], name: "index_repository_standard_auth_lookup_user_id_asset_id_can_view"
+    t.index ["user_id", "asset_id", "can_view"], name: "index_repo_standard_auth_lookup_user_id_asset_id"
     t.index ["user_id", "can_view"], name: "index_repository_standard_auth_lookup_on_user_id_and_can_view"
   end
 
